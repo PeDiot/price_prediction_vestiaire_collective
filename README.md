@@ -1,4 +1,4 @@
-# Aide à la décision dans la fixation du prix d'articles de seconde main
+# Decision Support for Pricing of Second-Hand items
 
 <br/>
 
