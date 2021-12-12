@@ -50,7 +50,7 @@ The algorithm's prediction of the market price is also an approximation of the *
 
 <br/>
 
-## Données 
+## Collected data  
 
 <br/>
 
