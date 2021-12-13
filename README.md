@@ -90,7 +90,7 @@ When a new article is put online, we have no information neither on the `we_love
 
 ### Predict the price
 
-xplanatory variables:
+Explanatory variables:
 
 - Product characteristics excluding `id`, `url`, `online_date`
 - Predicted values of `we_love_tag` 
