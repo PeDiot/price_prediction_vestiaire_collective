@@ -56,7 +56,7 @@ def target_boxplot(
     """Plot the target's repartition depending on the feature's category."""
     if title is None: 
         title = f"Price distribution by {feature}"
-    if target == "lrprice": 
+    if target == "lprice": 
         yaxis_label = "Log Price"
     else: 
         yaxis_label = "Price"
