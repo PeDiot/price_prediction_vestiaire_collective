@@ -4,7 +4,7 @@
 ## Data source
 
 
-[*Vestiaire Collective*](https://fr.vestiairecollective.com/) is a platform on which second-hand fashion items are traded. Its objective is to connect sellers and buyers while certifying the authenticity of the products offered by the sellers. This platform allows to remove the problem of asymetric information related to the sale of luxury products.
+[Vestiaire Collective](https://fr.vestiairecollective.com/) is a platform on which second-hand fashion items are traded. Its objective is to connect sellers and buyers while certifying the authenticity of the products offered by the sellers. This platform allows to remove the problem of asymetric information related to the sale of luxury products.
 
 
 ## Goal 
