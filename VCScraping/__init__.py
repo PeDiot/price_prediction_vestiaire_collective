@@ -4,6 +4,7 @@ VCScraping library.
 """
 
 from .methods import (
+    DIR, 
     BRANDS_DIR, 
     flatten_list, 
     load_json, 

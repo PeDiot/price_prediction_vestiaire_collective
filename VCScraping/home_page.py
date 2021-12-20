@@ -18,7 +18,7 @@ DevTools listening on ws://127.0.0.1:50148/devtools/browser/037aa521-2542-4fcf-8
 >>> scraper.driver.quit()
 """
 
-from .methods import accept_cookies, load_json
+from .methods import DIR, accept_cookies, load_json
 
 from bs4 import BeautifulSoup as bs
 
@@ -81,7 +81,7 @@ class HomePageScraper:
 def get_brands(): 
     """Return the name of all collected brands."""
     brands_links = load_json(
-        file_name="./backup/brands_links.json", 
+        file_name=DIR+"/backup/brands_links.json", 
         data_type=List[BrandLink]
     )
     return [brand.name for brand in brands_links]

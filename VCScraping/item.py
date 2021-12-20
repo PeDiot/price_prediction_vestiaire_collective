@@ -76,7 +76,7 @@ class ItemAttrs:
     condition: str 
     material: str
     color: str 
-    size: str 
+    size: List[str] 
     location: str 
     id: int 
 
@@ -125,7 +125,7 @@ class DescriptionParser:
     @staticmethod
     def _parse_size_desc(size_desc: str) -> int: 
         """Identify the correct size in the product's size value."""
-        return size_desc.split(" ")[0]
+        return size_desc.split(" ")[:2]
 
     @staticmethod
     def _parse_location_desc(loc_desc: str) -> str: 
