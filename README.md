@@ -1,14 +1,11 @@
 # Decision Support for Pricing of Second-Hand Items
 
-<br/>
 
 ## Data source
 
-<br/>
 
 [*Vestiaire Collective*](https://fr.vestiairecollective.com/) is a platform on which second-hand fashion items are traded. Its objective is to connect sellers and buyers while certifying the authenticity of the products offered by the sellers. This platform allows to remove the problem of asymetric information related to the sale of luxury products.
 
-<br/>
 
 ## Goal 
 
@@ -22,11 +19,10 @@ Stages of the sales process:
 4. The *benchmark* price is sent back to the user to help him choose the right price. 
 5. Extension: ads similar to the product the seller wants to sell are also returned as a comparison.
 
-<br/>
+
 
 ## Project challenges
 
-<br/>
 
 ### For the seller 
 
@@ -34,13 +30,10 @@ The algorithm's prediction allows him to avoid wasting time in setting the price
 - by preventing him from selling at too low a price, 
 - by preventing him from not finding buyers because his price is too high.
 
-<br/>
 
 ### For potential buyers
 
 The algorithm's prediction of the market price is also an approximation of the *willingness to pay of buyers for a given type of item. By helping sellers set the "right" price, the algorithm allows buyers to find items sold at a price close to their willingness to pay.
-
-<br/>
 
 ### For Vestiaire Collective 
 
@@ -48,11 +41,9 @@ The algorithm's prediction of the market price is also an approximation of the *
 
 **User satisfaction**: Buyers find items that are priced to generate a surplus and sellers save time selling their items.
 
-<br/>
 
 ## Collected data  
 
-<br/>
 
 | Variable   |      Type      | Description    |
 |:---------- |:------------- |:------------- |
@@ -72,11 +63,8 @@ The algorithm's prediction of the market price is also an approximation of the *
 | `size` | category | item's size (M, L, 40, etc.) | 
 | `location` | category ou string | seller's location | 
 
-<br/>
 
 ## Implementation 
-
-<br/> 
 
 ### Predict `we_love_tag` and `num_likes`
 
@@ -84,9 +72,6 @@ When a new article is put online, we have no information neither on the `we_love
 
 - Classification model would consist in predicting whether the article will be a favorite of Vestiaire Collective.
 - Regression model to forecast the number of likes that can be received by a new item. 
-
-<br/>
-
 
 ### Predict the price
 
@@ -102,11 +87,7 @@ Optimization of several regression models to determine the best-fitting relation
 
 Choice of the best model, training on the data set and saving
 
-<br/>
-
 ## User Interface
-
-<br/>
 
 GUI (Graphical User Interface) or CLI (Command Line Interface)
 
