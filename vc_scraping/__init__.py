@@ -1,6 +1,6 @@
 """Description.
 
-VCScraping library.
+Library to scrap the Vestiaire Collective website. 
 """
 
 from .methods import (

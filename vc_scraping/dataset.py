@@ -4,7 +4,7 @@ Sub-library to create the final dataset.
 
 Example:
 
->>> import VCScraping as vcs
+>>> import vc_scraping as vcs
 >>> final_data = vcs.make_dataset()          
 Final dataset saved at ./backup/vc_data.pkl.
 >>> final_data.head()

@@ -2,7 +2,7 @@
 
 Sub-library to collect data from Vestiaire Collective home page.
 
->>> import VcScraping as vcs
+>>> import vc_scraping as vcs
 >>> scraper = vcs.HomePageScraper()
 
 DevTools listening on ws://127.0.0.1:50148/devtools/browser/037aa521-2542-4fcf-8189-7766ee8fdf8b

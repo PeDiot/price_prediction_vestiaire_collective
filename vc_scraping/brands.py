@@ -4,7 +4,7 @@ Sub-library to collect the catalog of items each brand's first ten pages.
 
 Example: 
 
->>> import VcScraping as vcs
+>>> import vc_scraping as vcs
 >>> from selenium import webdriver
 >>> from typing import List
 >>> brands_links = vcs.load_json(

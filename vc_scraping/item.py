@@ -4,7 +4,7 @@ Sub-library to create ItemAttrs objects with all items' characteristics.
 
 Example: 
 
->>> import VCScraping as vcs
+>>> import vc_scraping as vcs
 >>> brand = "gucci"
 >>> page_no = 2
 >>> parser = vcs.DescriptionParser(brand, page_no)
