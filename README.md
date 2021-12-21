@@ -9,7 +9,7 @@
 
 ## Goal 
 
-This project aims to help sellers set the right price when they want to put an item on sale on Vestiaire Collective.
+This project aims to help sellers set the right price when they want to put an item on sale on Vestiaire Collective. 
 
 Stages of the sales process:
 
@@ -17,8 +17,10 @@ Stages of the sales process:
 2. The seller sets a price for his product.
 3. The *machine learning* algorithm predicts the price based on the product characteristics. This prediction serves as a *benchmark*.
 4. The *benchmark* price is sent back to the user to help him choose the right price. 
-5. Extension: ads similar to the product the seller wants to sell are also returned as a comparison.
-
+5. Extension: 
+    - Ads similar to the product the seller wants to sell are also returned as a comparison.
+    - Prediction of the number of likes received by the article. 
+    - Prediction of whether the article will be a favorite of the platform. 
 
 
 ## Project challenges
@@ -66,6 +68,16 @@ The algorithm's prediction of the market price is also an approximation of the *
 
 ## Implementation 
 
+### Predict the price
+
+Explanatory variables: product characteristics excluding `id`, `url`, `online_date`
+
+Target: `price`
+
+Optimization of several regression models to determine the best-fitting relationship between the target and the explanatory variables
+
+Choice of the best model, training on the data set and saving
+
 ### Predict `we_love_tag` and `num_likes`
 
 When a new article is put online, we have no information neither on the `we_love_tag` nor the `num_likes` variables: 
@@ -73,19 +85,7 @@ When a new article is put online, we have no information neither on the `we_love
 - Classification model would consist in predicting whether the article will be a favorite of Vestiaire Collective.
 - Regression model to forecast the number of likes that can be received by a new item. 
 
-### Predict the price
-
-Explanatory variables:
-
-- Product characteristics excluding `id`, `url`, `online_date`
-- Predicted values of `we_love_tag` 
-- Predicted values of `num_likes`
-
-Target: `price`
-
-Optimization of several regression models to determine the best-fitting relationship between the target and the explanatory variables
-
-Choice of the best model, training on the data set and saving
+Targets: `num_likes` and `we_love_tag` 
 
 ## User Interface
 
