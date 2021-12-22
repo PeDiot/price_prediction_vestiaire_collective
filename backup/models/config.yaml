@@ -1,0 +1,24 @@
+lr:
+  fit_intercept:
+  - true
+  - false
+rf:
+  max_depth:
+  - 10
+  - 50
+  - 100
+  - null
+  n_estimators:
+  - 100
+  - 250
+  - 500
+  oob_score:
+  - true
+ridge:
+  alpha:
+  - 1.0
+  - 0.1
+  - 0.01
+  fit_intercept:
+  - true
+  - false
