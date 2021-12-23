@@ -149,12 +149,12 @@ class SplitData:
             "X": X, 
             "y": self._make_dict_of_targets(y)
         }
-        with open(BACKUP+file_name , "wb") as file:
+        with open(BACKUP+"data"+file_name , "wb") as file:
             dump(obj=data, file=file) 
 
 def load_data(file_name: str, target: Target): 
     """Return X and y arrays."""
-    file_path = BACKUP + file_name 
+    file_path = BACKUP + "data/" + file_name 
     with open(BACKUP+file_name , "rb") as file:
         data = load(file) 
     return data["X"], data["y"][target.value] 
