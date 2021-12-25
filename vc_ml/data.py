@@ -155,6 +155,6 @@ class SplitData:
 def load_data(file_name: str, target: Target): 
     """Return X and y arrays."""
     file_path = BACKUP + "data/" + file_name 
-    with open(BACKUP+file_name , "rb") as file:
+    with open(file_path , "rb") as file:
         data = load(file) 
     return data["X"], data["y"][target.value] 

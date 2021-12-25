@@ -121,6 +121,10 @@ class RidgeEstimator:
 class RFEstimator: 
     n_estimators: Optional[list[int]] = None
     max_depth: Optional[list[int]] = None
+    min_samples_split: Optional[list[int]] = None 
+    min_samples_leaf: Optional[list[int]] = None 
+    max_features: Optional[list[str]] = None 
+    max_samples: Optional[list[float]] = None 
     oob_score: Optional[list[bool]] = None 
 
     def __call__(self) -> Dict:
@@ -128,6 +132,10 @@ class RFEstimator:
             "model__estimator": [RandomForestRegressor()], 
             "model__estimator__n_estimators": self.n_estimators, 
             "model__estimator__max_depth": self.max_depth, 
+            "model__estimator__min_samples_split": self.min_samples_split, 
+            "model__estimator__min_samples_leaf": self.min_samples_leaf,  
+            "model__estimator__max_features": self.max_features, 
+            "model__estimator__max_samples": self.max_samples, 
             "model__estimator__oob_score": self.oob_score
         }
         
@@ -228,7 +236,8 @@ class Training:
         """Build the grid search CV for parameters tuning."""
         param_grid = [
             mod()
-            for mod in self._config   
+            for mod in self._config  
+            if mod is not None 
         ]
         return GridSearchCV(
             estimator=p, 
