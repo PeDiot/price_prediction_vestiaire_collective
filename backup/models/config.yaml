@@ -1,24 +1,33 @@
-lr:
-  fit_intercept:
-  - true
-  - false
 rf:
   max_depth:
   - 10
   - 50
   - 100
   - null
+  max_features:
+  - "sqrt"
+  - "log2"
+  max_samples:
+  - .2
+  - .5
+  - .7
+  - 1.
+  min_samples_leaf: 
+  - 1
+  - 2
+  - 5
+  - 10
+  - 20
+  min_samples_split:
+  - 2
+  - 5
+  - 10
+  - 15
+  - 20
   n_estimators:
   - 100
   - 250
   - 500
+  - 1000
   oob_score:
   - true
-ridge:
-  alpha:
-  - 1.0
-  - 0.1
-  - 0.01
-  fit_intercept:
-  - true
-  - false
