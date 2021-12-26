@@ -19,5 +19,7 @@ from .training import(
     load_config, 
     EstimatorSwitcher, 
     Training, 
+    save_grid_search, 
+    display_results, 
 )
 

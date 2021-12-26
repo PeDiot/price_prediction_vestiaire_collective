@@ -53,8 +53,10 @@ Fitting 3 folds for each of 20 candidates, totalling 60 fits
 
 import numpy as np 
 import pandas as pd
-from pickle import load, dump 
+from pickle import dump 
 import os
+
+from rich.table import Table 
 from rich import print
 
 from serde import serialize, deserialize
@@ -138,7 +140,33 @@ class RFEstimator:
             "model__estimator__max_samples": self.max_samples, 
             "model__estimator__oob_score": self.oob_score
         }
-        
+
+@serialize
+@deserialize
+@dataclass
+class GBEstimator: 
+    n_estimators: Optional[list[int]] = None
+    min_samples_split: Optional[list[int]] = None 
+    min_samples_leaf: Optional[list[int]] = None 
+    max_depth: Optional[list[int]] = None
+    loss: Optional[list[str]] = None 
+    learning_rate: Optional[list[float]] = None 
+    criterion: Optional[list[str]] = None 
+
+    def __call__(self) -> Dict:
+        return {
+            "model__estimator": [GradientBoostingRegressor()], 
+            "model__estimator__n_estimators": self.n_estimators, 
+            "model__estimator__max_depth": self.max_depth, 
+            "model__estimator__min_samples_split": self.min_samples_split, 
+            "model__estimator__min_samples_leaf": self.min_samples_leaf,  
+            "model__estimator__loss": self.loss, 
+            "model__estimator__learning_rate": self.learning_rate, 
+            "model__estimator__criterion": self.criterion
+        }
+
+
+         
 @serialize
 @deserialize
 @dataclass
@@ -146,13 +174,14 @@ class Config:
     lr: Optional[LREstimator] = None 
     ridge: Optional[RidgeEstimator] = None 
     rf: Optional[RFEstimator] = None 
+    gb: Optional[GBEstimator] = None 
 
     def __iter__(self):
         """Iterate across models."""
         return iter(self.__dict__.values())
 
     def __repr__(self) -> str:
-        return f"Config(lr={self.lr}, ridge={self.ridge}, rf={self.rf})"
+        return f"Config(lr={self.lr}, ridge={self.ridge}, rf={self.rf}, gb={self.gb})"
 
 def create_config(file_name: str = "config.yaml"): 
     config = Config(
@@ -251,13 +280,23 @@ class Training:
     def fit(self, g:GridSearchCV) -> GridSearchCV: 
         """Fit grid search to the data."""
         return g.fit(self.X, self.y)
-    
-    def save(
-        self, 
-        g_fitted:GridSearchCV, 
-        file_name: str
-    ): 
-        """Save fitted grid search."""
-        path = BACKUP + "models/" + file_name
-        with open(path , "wb") as file:
-            dump(obj=g_fitted, file=file)  
+
+def save_grid_search(
+    g_fitted:GridSearchCV, 
+    file_name: str
+): 
+    """Save fitted grid search."""
+    path = BACKUP + "models/" + file_name
+    with open(path , "wb") as file:
+        dump(obj=g_fitted, file=file)  
+
+def display_results(g:GridSearchCV) -> Table: 
+    """Display best model's results."""
+    tab = Table()
+    best_params = g.best_params_
+    best_score = g.best_score_
+    for key in best_params.keys(): 
+        tab.add_column(key)
+    tab.add_column("Score")
+    tab.add_row( *[str(val) for val in best_params.values()], str(best_score) )
+    print(tab)
