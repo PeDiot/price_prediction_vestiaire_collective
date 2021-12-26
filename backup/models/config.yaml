@@ -1,17 +1,9 @@
-rf:
+gb:
   max_depth:
   - 10
   - 50
   - 100
   - null
-  max_features:
-  - "sqrt"
-  - "log2"
-  max_samples:
-  - .2
-  - .5
-  - .7
-  - 1.
   min_samples_leaf: 
   - 1
   - 2
@@ -29,5 +21,16 @@ rf:
   - 250
   - 500
   - 1000
-  oob_score:
-  - true
+  loss: 
+  - "squared_error"
+  - "absolute_error"
+  - "huber"
+  learning_rate:
+  - 1.
+  - .1
+  - .01
+  - .001
+  criterion:
+  - "friedman_mse"
+  - "squared_error"
+  - "mae"
