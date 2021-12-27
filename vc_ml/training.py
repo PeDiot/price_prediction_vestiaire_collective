@@ -27,14 +27,15 @@ Training(X=[[0 1 0 ... 0 1 0]
  [1 0 0 ... 0 1 0]], y=[300.    50.35 125.   ...  85.   325.   249.  ], config=Config(lr=LREstimator(fit_intercept=[True, False]), ridge=RidgeEstimator(alpha=[1.0, 0.1, 0.01], fit_intercept=[True, False]), rf=RFEstimator(n_estimators=[100, 250, 500], max_depth=[10, 50, 100, None], oob_score=[True])), cv=3, n_pcs=40)
 >>> p = training.make_pipeline()
 >>> p 
-Pipeline(steps=[('pca', PCA(n_components=40)), ('model', EstimatorSwitcher())])
+Pipeline(steps=[('pca', PCA(), ('model', EstimatorSwitcher())])
 >>> g = training.build_grid_search(p) 
 >>> g
 GridSearchCV(cv=3,
-             estimator=Pipeline(steps=[('pca', PCA(n_components=40)),
+             estimator=Pipeline(steps=[('pca', PCA()),
                                        ('model', EstimatorSwitcher())]),
              n_jobs=7,
-             param_grid=[{'model__estimator': [LinearRegression()],
+             param_grid=[{'pca__n_components': [40]}, 
+                         {'model__estimator': [LinearRegression()],
                           'model__estimator__fit_intercept': [True, False]},
                          {'model__estimator': [Ridge()],
                           'model__estimator__alpha': [1.0, 0.1, 0.01],
@@ -97,8 +98,12 @@ CPU_COUNT = os.cpu_count()
 class LREstimator: 
     fit_intercept: Optional[list[bool]] = None  
 
-    def __call__(self) -> Dict:
+    def __call__(
+        self, 
+        n_pcs: List[int] 
+    ) -> Dict:
         return {
+            "pca__n_components": n_pcs, 
             "model__estimator": [LinearRegression()], 
             "model__estimator__fit_intercept": self.fit_intercept
         }
@@ -110,8 +115,12 @@ class RidgeEstimator:
     alpha: Optional[list[float]] = None
     fit_intercept: Optional[list[bool]] = None 
 
-    def __call__(self) -> Dict:
+    def __call__(
+        self,
+        n_pcs: List[int] 
+    ) -> Dict:
         return {
+            "pca__n_components": n_pcs, 
             "model__estimator": [Ridge()], 
             "model__estimator__alpha": self.alpha, 
             "model__estimator__fit_intercept": self.fit_intercept
@@ -129,8 +138,12 @@ class RFEstimator:
     max_samples: Optional[list[float]] = None 
     oob_score: Optional[list[bool]] = None 
 
-    def __call__(self) -> Dict:
+    def __call__(
+        self, 
+        n_pcs: List[int]
+    ) -> Dict:
         return {
+            "pca__n_components": n_pcs, 
             "model__estimator": [RandomForestRegressor()], 
             "model__estimator__n_estimators": self.n_estimators, 
             "model__estimator__max_depth": self.max_depth, 
@@ -153,8 +166,12 @@ class GBEstimator:
     learning_rate: Optional[list[float]] = None 
     criterion: Optional[list[str]] = None 
 
-    def __call__(self) -> Dict:
+    def __call__(
+        self, 
+        n_pcs: List[int]
+    ) -> Dict:
         return {
+            "pca__n_components": n_pcs, 
             "model__estimator": [GradientBoostingRegressor()], 
             "model__estimator__n_estimators": self.n_estimators, 
             "model__estimator__max_depth": self.max_depth, 
@@ -240,7 +257,7 @@ class Training:
         y: np.ndarray, 
         config: Config, 
         cv: int, 
-        n_pcs: int = 40
+        n_pcs: List[int] = [40]
         
     ):
         self.X, self.y = X, y 
@@ -254,7 +271,7 @@ class Training:
     def make_pipeline(self): 
         """Return a pipeline with PCA as first step."""
         return Pipeline([
-            ("pca", PCA(n_components=self._n_pcs)),
+            ("pca", PCA()),
             ("model", EstimatorSwitcher()),
         ])
 
@@ -264,10 +281,10 @@ class Training:
     ): 
         """Build the grid search CV for parameters tuning."""
         param_grid = [
-            mod()
-            for mod in self._config  
+            mod(n_pcs=self._n_pcs)
+            for mod in self._config
             if mod is not None 
-        ]
+        ] 
         return GridSearchCV(
             estimator=p, 
             param_grid=param_grid, 
