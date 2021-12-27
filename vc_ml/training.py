@@ -1,6 +1,6 @@
 """Description.
 
-Automate the training step to obtain the most performant model.
+Automate models' training process using pipelines and grid search.
 
 Example: 
 >>> from vc_ml import (
