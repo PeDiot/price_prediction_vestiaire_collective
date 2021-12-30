@@ -67,7 +67,7 @@ from typing import Dict, List
 
 from sklearn.model_selection import train_test_split
 
-BACKUP = "C:/Users/pemma/OneDrive - Université de Tours/Mécen/M2/S1/02 - Machine Learning/05 - Projet/ML_Vestiaire_Collective/backup/"
+BACKUP = "./backup/"
 
 class Target(Enum): 
     PRICE = "price"
