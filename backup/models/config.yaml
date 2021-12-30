@@ -1,0 +1,19 @@
+gb:
+  criterion:
+  - friedman_mse
+  learning_rate:
+  - 0.1
+  loss:
+  - squared_error
+  max_depth:
+  - 10
+  min_samples_leaf:
+  - 10
+  min_samples_split:
+  - 10
+  n_estimators:
+  - 200
+  - 500
+  - 1000
+  tol:
+  - 0.001
