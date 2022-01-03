@@ -3,63 +3,85 @@
 Machine Learning library to fit models on Vestiaire Collective data.
 
 Example: 
+In [1]: from vc_ml import SplitData
+In [2]: s = SplitData(file_name='vc_data_cleaned.pkl')
+In [3]: X = s.get_feature_vector()
+In [4]: y = s.get_targets()
+In [5]: X_train, X_test, y_train, y_test = s.split(X, y)
+In [6]: s.save(
+    ...: ... X=X_train,
+    ...: ... y=y_train,
+    ...: ... file_name='train.pkl'
+    ...: ... )
+In [7]: s.save(
+    ...: X=X_test,
+    ...: y=y_test,
+    ...: file_name='test.pkl'
+    ...: )
+
 In [1]: from vc_ml import (
-   ...: load_data,
    ...: load_config,
-   ...: Training,
-   ...: Target,
+   ...: load_data,
+   ...: train_models
    ...: )
-In [2]: config = load_config()
-In [3]: X_tr, y_tr = load_data(file_name="train.pkl", target=Target.PRICE)
-In [4]: training = Training(
-   ...: X=X_tr,
-   ...: y=y_tr,
-   ...: config=config,
-   ...: cv=3
+
+In [2]: config = load_config(file_name='config_init.yaml')
+
+In [3]: X_tr, y_tr = load_data(file_name='train.pkl')
+
+In [4]: train_models(
+   ...: X_tr=X_tr,
+   ...: y_tr=y_tr,
+   ...: config=config
    ...: )
-In [5]: training
-Out[5]: 
-Training(X=[[0 1 0 ... 0 1 0]
- [0 1 0 ... 0 0 0]
- [0 1 1 ... 0 1 0]
- ...
- [0 1 0 ... 0 1 0]
- [0 1 0 ... 0 1 0]
- [1 0 0 ... 0 1 0]], y=[300.    50.35 125.   ...  85.   325.   249.  ], config=Config(lr=LREstimator(fit_intercept=[True]), ridge=RidgeEstimator(alpha=[1.0], fit_intercept=[True]), tree=TreeEstimator(max_depth=[None], min_samples_split=[2], min_samples_leaf=[1], max_features=['auto'], ccp_alpha=[0.0]), rf=RFEstimator(n_estimators=[100], max_depth=[None], min_samples_split=[2], min_samples_leaf=[1], max_features=['auto'], max_samples=[1.0], oob_score=[True]), gb=GBEstimator(n_estimators=[100], min_samples_split=[2], min_samples_leaf=[1], max_depth=[3], loss=['squared_error'], learning_rate=[0.1], criterion=['friedman_mse'], tol=[0.001]), mlp=MLPEstimator(hidden_layer_sizes=[[100]], max_iter=[200], activation=['relu'], solver=['adam'], learning_rate_init=[0.001])), cv=3, n_pcs=[40])
-In [6]: p = training.make_pipeline()
-
-In [7]: g = training.build_grid_search(p)
-
-In [8]: g
-Out[8]: 
-GridSearchCV(cv=3,
-             estimator=Pipeline(steps=[('pca', PCA()),
-                                       ('model', EstimatorSwitcher())]),
-             n_jobs=7,
-             param_grid=[{'model__estimator': [LinearRegression()],
-                          'model__estimator__fit_intercept': [True],
-                          'pca__n_components': [40]},
-                         {'model__estimator': [Ridge()],
-                          'model__estimator__alpha': [1.0],
-                          'model__estimator__fit_intercept': [True],
-                          'pca__n_components': [40]},
-                         {'...
-                          'model__estimator__tol': [0.001],
-
-In [9]: training.fit(g)
-Fitting 3 folds for each of 6 candidates, totalling 18 fits
-...         
-In [10]: from vc_ml import display_results
-
-In [11]: display_results(g)
-┏━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━┓
-┃ model__estimator       ┃ model__estimator__act… ┃ model__estimator__hid… ┃ model__estimator__lea… ┃ model__estimator__max… ┃ model__estimator__sol… ┃ pca__n_components ┃ Score               ┃
-┡━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━┩
-│ MLPRegressor(hidden_l… │ relu                   │ [100]                  │ 0.001                  │ 200                    │ adam                   │ 40                │ 0.26610131582485597 │
-└────────────────────────┴────────────────────────┴────────────────────────┴────────────────────────┴────────────────────────┴────────────────────────┴───────────────────┴─────────────────────┘
-In [12]: from vc_ml import save_grid_search
-
-In [13]: save_grid_search(g_fitted=g, file_name="grid_search_init.pkl")
+[Parallel(n_jobs=7)]: Using backend LokyBackend with 7 concurrent workers.
+...
+[Parallel(n_jobs=7)]: Done   5 out of   5 | elapsed:  1.3min finished
+Out[4]: 
+{'pipeline': [Pipeline(steps=[('enc',
+                   OneHotEncoder(drop='first', handle_unknown='ignore',
+                                 sparse=False)),
+                  ('model', DummyRegressor())]),
+  Pipeline(steps=[('enc',
+                   OneHotEncoder(drop='first', handle_unknown='ignore',
+                                 sparse=False)),
+                  ('model', LinearRegression())]),
+  Pipeline(steps=[('enc',
+                   OneHotEncoder(drop='first', handle_unknown='ignore',
+                                 sparse=False)),
+                  ('model', Ridge())]),
+  Pipeline(steps=[('enc',
+                   OneHotEncoder(drop='first', handle_unknown='ignore',
+                                 sparse=False)),
+                  ('model', DecisionTreeRegressor(max_features='auto'))]),
+  Pipeline(steps=[('enc',
+                   OneHotEncoder(drop='first', handle_unknown='ignore',
+                                 sparse=False)),
+                  ('model',
+                   RandomForestRegressor(max_samples=1.0, oob_score=True))]),
+  Pipeline(steps=[('enc',
+                   OneHotEncoder(drop='first', handle_unknown='ignore',
+                                 sparse=False)),
+                  ('model', GradientBoostingRegressor(tol=0.001))]),
+  Pipeline(steps=[('enc',
+                   OneHotEncoder(drop='first', handle_unknown='ignore',
+                                 sparse=False)),
+                  ('model',
+                   MLPRegressor(hidden_layer_sizes=[100], max_iter=1000))])],
+ 'train_score': [0.0,
+  0.27561146372517936,
+  0.2754115644408693,
+  0.9744985506246093,
+  0.8767106900430065,
+  0.5537342215324665,
+  0.4269886698222124],
+ 'test_score': [-0.0002750862547341804,
+  0.2735945152729668,
+  0.275715773342255,
+  -0.49164590153689236,
+  0.23452220869275164,
+  0.2912611455559938,
+  0.38442793820220944]}
 """
 
 from .data import (
@@ -69,8 +91,8 @@ from .data import (
     load_data,
 ) 
 
-from .estimators import (
-    EstimatorSwitcher, 
+from .estimators import ( 
+    DummyEstimator, 
     LREstimator, 
     RidgeEstimator, 
     TreeEstimator, 
@@ -87,8 +109,14 @@ from .config import (
 
 from .training import(
     CPU_COUNT,
-    Training, 
-    save_grid_search, 
-    display_results, 
+    ModelTraining, 
+    train_models, 
+)
+
+from .selection import (
+    ModelDir, 
+    get_cv_results,
+    get_pipeline_scores, 
+    get_best_pipeline, 
 )
 

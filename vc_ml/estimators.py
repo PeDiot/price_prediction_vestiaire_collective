@@ -14,7 +14,8 @@ from typing import (
     Tuple, 
 )
 
-from sklearn.base import BaseEstimator
+from sklearn.dummy import DummyRegressor
+
 from sklearn.linear_model import (
     LinearRegression, 
     Ridge, 
@@ -26,30 +27,17 @@ from sklearn.ensemble import (
 )
 from sklearn.neural_network import MLPRegressor
 
-class EstimatorSwitcher(BaseEstimator):
-    """A custom BaseEstimator that can switch between estimators."""
-    def __init__(
-        self, 
-        estimator=LinearRegression(),
-    ):
-        self.estimator = estimator
+@serialize
+@deserialize
+@dataclass
+class DummyEstimator:
+    strategy: Optional[list[str]] = field(default_factory=lambda: ["mean"]) 
 
-    def __repr__(self):
-        return "EstimatorSwitcher()"
-
-    def fit(self, X, y=None, **kwargs):
-        self.estimator.fit(X, y)
-        return self
-
-    def predict(self, X, y=None):
-        return self.estimator.predict(X)
-
-    def predict_proba(self, X):
-        return self.estimator.predict_proba(X)
-
-    def score(self, X, y):
-        return self.estimator.score(X, y)
-
+    def __call__(self) -> Dict:
+        return {
+            "estimator": DummyRegressor(), 
+            "strategy": self.strategy
+        }
 
 @serialize
 @deserialize
@@ -57,14 +45,10 @@ class EstimatorSwitcher(BaseEstimator):
 class LREstimator: 
     fit_intercept: Optional[list[bool]] = field(default_factory=lambda: [True])  
 
-    def __call__(
-        self, 
-        n_pcs: List[int] 
-    ) -> Dict:
+    def __call__(self) -> Dict:
         return {
-            "pca__n_components": n_pcs, 
-            "model__estimator": [LinearRegression()], 
-            "model__estimator__fit_intercept": self.fit_intercept
+            "estimator": LinearRegression(), 
+            "fit_intercept": self.fit_intercept
         }
 
 @serialize
@@ -74,15 +58,11 @@ class RidgeEstimator:
     alpha: Optional[list[float]] = field(default_factory=lambda: [1.0])  
     fit_intercept: Optional[list[bool]] = field(default_factory=lambda: [True])  
 
-    def __call__(
-        self,
-        n_pcs: List[int] 
-    ) -> Dict:
+    def __call__(self) -> Dict:
         return {
-            "pca__n_components": n_pcs, 
-            "model__estimator": [Ridge()], 
-            "model__estimator__alpha": self.alpha, 
-            "model__estimator__fit_intercept": self.fit_intercept
+            "estimator": Ridge(), 
+            "alpha": self.alpha, 
+            "fit_intercept": self.fit_intercept
         }
 
 @serialize
@@ -95,21 +75,16 @@ class TreeEstimator:
     max_features: Optional[list[str]] = field(default_factory=lambda: ["auto"])  
     ccp_alpha: Optional[list[float]] = field(default_factory=lambda: [0.0])  
 
-    def __call__(
-        self,
-        n_pcs: List[int] 
-    ) -> Dict:
-        return {
-            "pca__n_components": n_pcs, 
-            "model__estimator": [DecisionTreeRegressor()], 
-            "model__estimator__max_depth": self.max_depth, 
-            "model__estimator__min_samples_split": self.min_samples_split, 
-            "model__estimator__min_samples_leaf": self.min_samples_leaf,  
-            "model__estimator__max_features": self.max_features, 
-            "model__estimator__ccp_alpha": self.ccp_alpha
+    def __call__(self) -> Dict:
+        return  {
+            "estimator": DecisionTreeRegressor(), 
+            "max_depth": self.max_depth, 
+            "min_samples_split": self.min_samples_split, 
+            "min_samples_leaf": self.min_samples_leaf,  
+            "max_features": self.max_features, 
+            "ccp_alpha": self.ccp_alpha
         }
-
-
+        
 @serialize
 @deserialize
 @dataclass
@@ -122,20 +97,16 @@ class RFEstimator:
     max_samples: Optional[list[float]] = field(default_factory=lambda: [1.0])  
     oob_score: Optional[list[bool]] = field(default_factory=lambda: [True])   
 
-    def __call__(
-        self, 
-        n_pcs: List[int]
-    ) -> Dict:
+    def __call__(self) -> Dict:
         return {
-            "pca__n_components": n_pcs, 
-            "model__estimator": [RandomForestRegressor()], 
-            "model__estimator__n_estimators": self.n_estimators, 
-            "model__estimator__max_depth": self.max_depth, 
-            "model__estimator__min_samples_split": self.min_samples_split, 
-            "model__estimator__min_samples_leaf": self.min_samples_leaf,  
-            "model__estimator__max_features": self.max_features, 
-            "model__estimator__max_samples": self.max_samples, 
-            "model__estimator__oob_score": self.oob_score
+            "estimator": RandomForestRegressor(), 
+            "n_estimators": self.n_estimators, 
+            "max_depth": self.max_depth, 
+            "min_samples_split": self.min_samples_split, 
+            "min_samples_leaf": self.min_samples_leaf,  
+            "max_features": self.max_features, 
+            "max_samples": self.max_samples, 
+            "oob_score": self.oob_score
         }
 
 @serialize
@@ -151,23 +122,19 @@ class GBEstimator:
     criterion: Optional[list[str]] = field(default_factory=lambda: ["friedman_mse"])  
     tol: Optional[list[float]] = field(default_factory=lambda: [.001])  
 
-    def __call__(
-        self, 
-        n_pcs: List[int]
-    ) -> Dict:
+    def __call__(self) -> Dict:
         return {
-            "pca__n_components": n_pcs, 
-            "model__estimator": [GradientBoostingRegressor()], 
-            "model__estimator__n_estimators": self.n_estimators, 
-            "model__estimator__max_depth": self.max_depth, 
-            "model__estimator__min_samples_split": self.min_samples_split, 
-            "model__estimator__min_samples_leaf": self.min_samples_leaf,  
-            "model__estimator__loss": self.loss, 
-            "model__estimator__learning_rate": self.learning_rate, 
-            "model__estimator__criterion": self.criterion, 
-            "model__estimator__tol": self.tol 
+            "estimator": GradientBoostingRegressor(), 
+            "n_estimators": self.n_estimators, 
+            "max_depth": self.max_depth, 
+            "min_samples_split": self.min_samples_split, 
+            "min_samples_leaf": self.min_samples_leaf,  
+            "loss": self.loss, 
+            "learning_rate": self.learning_rate, 
+            "criterion": self.criterion, 
+            "tol": self.tol 
         }
-
+    
 @serialize
 @deserialize
 @dataclass
@@ -178,17 +145,13 @@ class MLPEstimator:
     solver: Optional[list[str]] = field(default_factory=lambda: ["adam"])  
     learning_rate_init: Optional[list[float]] = field(default_factory=lambda: [.001])  
 
-    def __call__(
-        self, 
-        n_pcs: List[int]
-    ) -> Dict:
+    def __call__(self) -> Dict:
         return {
-            "pca__n_components": n_pcs, 
-            "model__estimator": [MLPRegressor()], 
-            "model__estimator__hidden_layer_sizes": self.hidden_layer_sizes, 
-            "model__estimator__max_iter": self.max_iter, 
-            "model__estimator__activation": self.activation, 
-            "model__estimator__solver": self.solver, 
-            "model__estimator__learning_rate_init": self.learning_rate_init, 
+            "estimator": MLPRegressor(), 
+            "hidden_layer_sizes": self.hidden_layer_sizes, 
+            "max_iter": self.max_iter, 
+            "activation": self.activation, 
+            "solver": self.solver, 
+            "learning_rate_init": self.learning_rate_init, 
         }
 
