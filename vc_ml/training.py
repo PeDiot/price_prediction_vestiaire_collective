@@ -227,6 +227,7 @@ def train_models(
                         param_grid=param_grid, 
                         n_comp=n_comp
                     )
+                    print(f"estimator: {training.estimator} - param_grid: {training.param_grid} - n_comp: {training.n_comp}")
                     p = training.init_pipeline()
                     if not training.check_pipe_backup(p):
                         cv_results = training.cross_val_fit(p=p, cv=cv)
@@ -239,6 +240,7 @@ def train_models(
                         estimator=est,
                         param_grid=param_grid
                     )
+                print(f"Estimator: {training.estimator} - param_grid: {training.param_grid}")
                 p = training.init_pipeline()
                 if not training.check_pipe_backup(p):
                     cv_results = training.cross_val_fit(p=p, cv=cv)

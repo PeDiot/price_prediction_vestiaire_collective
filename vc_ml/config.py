@@ -1,6 +1,55 @@
 """Description.
 
 Classes and functions for models configuration.
+
+Example: 
+
+In [1]: from vc_ml import (create_config, load_config)
+
+In [2]: create_config(file_name="config_init.yaml")
+
+In [3]: config = load_config(file_name="config_init.yaml")
+
+In [4]: config
+Out[4]: Config(lr=LREstimator(fit_intercept=[True]), ridge=RidgeEstimator(alpha=[1.0], fit_intercept=[True]), tree=TreeEstimator(max_depth=[None], min_samples_split=[2], min_samples_leaf=[1], max_features=['auto'], ccp_alpha=[0.0]), rf=RFEstimator(n_estimators=[100], max_depth=[None], min_samples_split=[2], min_samples_leaf=[1], max_features=['auto'], max_samples=[1.0], oob_score=[True]), gb=GBEstimator(n_estimators=[100], min_samples_split=[2], min_samples_leaf=[1], max_depth=[3], loss=['squared_error'], learning_rate=[0.1], criterion=['friedman_mse'], tol=[0.001]), mlp=MLPEstimator(hidden_layer_sizes=[[100]], max_iter=[200], activation=['relu'], solver=['adam'], learning_rate_init=[0.001]))
+
+In [5]: config.init_models()
+Out[5]: 
+([DummyRegressor(),
+  LinearRegression(),
+  Ridge(),
+  DecisionTreeRegressor(),
+  RandomForestRegressor(),
+  GradientBoostingRegressor(),
+  MLPRegressor()],
+ [{'strategy': ['mean']},
+  {'fit_intercept': [True]},
+  {'alpha': [1.0], 'fit_intercept': [True]},
+  {'max_depth': [None],
+   'min_samples_split': [2],
+   'min_samples_leaf': [1],
+   'max_features': ['auto'],
+   'ccp_alpha': [0.0]},
+  {'n_estimators': [100],
+   'max_depth': [None],
+   'min_samples_split': [2],
+   'min_samples_leaf': [1],
+   'max_features': ['auto'],
+   'max_samples': [1.0],
+   'oob_score': [True]},
+  {'n_estimators': [100],
+   'max_depth': [3],
+   'min_samples_split': [2],
+   'min_samples_leaf': [1],
+   'loss': ['squared_error'],
+   'learning_rate': [0.1],
+   'criterion': ['friedman_mse'],
+   'tol': [0.001]},
+  {'hidden_layer_sizes': [[100]],
+   'max_iter': [200],
+   'activation': ['relu'],
+   'solver': ['adam'],
+   'learning_rate_init': [0.001]}])
 """
 
 from dataclasses import dataclass
@@ -63,6 +112,7 @@ class Config:
         return estimators, params 
 
 def create_config(file_name: str = "config_init.yaml"): 
+    """Initialize a configuration file."""
     config = Config(
         dum=DummyEstimator(), 
         lr=LREstimator(), 
@@ -70,7 +120,7 @@ def create_config(file_name: str = "config_init.yaml"):
         tree=TreeEstimator(), 
         rf=RFEstimator(),
         gb=GBEstimator(), 
-        mlp=MLPEstimator(hidden_layer_sizes=[[100, 100,], [200,], [50, 100, 50,]]) 
+        mlp=MLPEstimator() 
     )
     path = BACKUP + "config/" + file_name
     with open(path, "w") as file:
