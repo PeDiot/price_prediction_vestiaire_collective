@@ -3,52 +3,96 @@
 Automate the train/test split process. 
 
 Example: 
-In [1]: from vc_ml import SplitData
-
-In [2]: s = SplitData(file_name="vc_data_cleaned.pkl")
-
-In [3]: s
-Out[3]: SplitData(file_name==vc_data_cleaned.pkl, targets=['price', 'lprice', 'we_love_tag', 'num_likes'], test_prop=0.3)
-
-In [4]: s.data
-Out[4]: 
-          num_likes   price  we_love_tag gender     category sub_category            designer            condition        material  color      size location    lprice
-id
-19126896          7  180.00            1  women        shoes        boots        acne studios  very_good_condition         leather  black   size_39       eu  5.198497
-19181389          1   40.55            1  women     clothing        jeans        acne studios       good_condition     denim_jeans   navy    size_m       eu  3.726898
-19182029          6  332.50            1    men     clothing        coats        acne studios       good_condition            wool  black    size_l       eu  5.809643
-19132670          3   45.00            0    men     clothing        jeans        acne studios           never_worn          cotton   grey    size_m       eu  3.828641
-19118182          9  105.00            0  women     clothing      dresses        acne studios  very_good_condition  other_material  black    size_s       eu  4.663439
-...             ...     ...          ...    ...          ...          ...                 ...                  ...             ...    ...       ...      ...       ...
-19201767          1   95.00            0  women         bags   small_bags  yves saint laurent           never_worn           cloth  black   no_size       eu  4.564348
-19062770          4   44.00            1  women  accessories      scarves  yves saint laurent  very_good_condition       polyester   navy   no_size       eu  3.806662
-19210693         15   80.00            0  women  accessories        belts  yves saint laurent  very_good_condition         leather   blue   size_xs       eu  4.394449
-18970201         46  162.00            1  women         bags     handbags  yves saint laurent  very_good_condition       synthetic   pink   no_size       eu  5.093750
-19216508          0  173.80            0  women     clothing      jackets  yves saint laurent  very_good_condition          cotton  camel  size_xxl       eu  5.163642
-
-[9572 rows x 13 columns]
-
-In [5]: X = s.get_feature_vector()
-
-In [6]: y = s.get_targets()
-
-In [7]: X_train, X_test, y_train, y_test = s.split(X, y)
-
-In [8]: s._make_dict_of_targets(y_train)
-Out[8]:
-{'price': array([ 126.  ,  450.  ,  470.  , ...,  170.  ,  346.17, 1800.  ]),
- 'lprice': array([4.84418709, 6.11146734, 6.15485809, ..., 5.14166356, 5.84981457,
-        7.49609735]),
- 'we_love_tag': array([0., 0., 0., ..., 1., 0., 0.]),
- 'num_likes': array([ 6., 16.,  2., ..., 16.,  1.,  6.])}
-
-In [9]: s.save(
-   ...: X=X_train,
-   ...: y=y_train,
-   ...: file_name="train.pkl"
+In [1]: from vc_ml import (
+   ...: read_data,
+   ...: to_dummies,
+   ...: SplitData,
+   ...: Target
    ...: )
 
-In [10]: s.save(
+In [2]: data = read_data(file_name="vc_data_cleaned.pkl")
+
+In [3]: data.head()
+Out[3]: 
+          num_likes   price  we_love_tag gender  category sub_category  ...            condition        material  color     size location    lprice   
+id                                                                      ...
+19126896          7  180.00            1  women     shoes        boots  ...  very_good_condition         leather  black  size_39       eu  5.198497   
+19181389          1   40.55            1  women  clothing        jeans  ...       good_condition     denim_jeans   navy   size_m       eu  3.726898   
+19182029          6  332.50            1    men  clothing        coats  ...       good_condition            wool  black   size_l       eu  5.809643   
+19132670          3   45.00            0    men  clothing        jeans  ...           never_worn          cotton   grey   size_m       eu  3.828641   
+19118182          9  105.00            0  women  clothing      dresses  ...  very_good_condition  other_material  black   size_s       eu  4.663439   
+
+[5 rows x 13 columns]
+
+In [4]: data = data.drop(
+   ...: labels=["category"],
+   ...: axis=1
+   ...: )
+
+In [5]: data.columns
+Out[5]: 
+Index(['num_likes', 'price', 'we_love_tag', 'gender', 'sub_category',
+       'designer', 'condition', 'material', 'color', 'size', 'location',
+       'lprice'],
+      dtype='object')
+
+In [6]: new_data = to_dummies(data)
+
+In [7]: new_data.head()
+Out[7]:
+          num_likes   price  we_love_tag    lprice  women  belts  boots  coats  ...  size_m  size_s  size_xl  size_xs  size_xxl  size_xxs  eu  uk     
+id                                                                              ...
+19126896          7  180.00            1  5.198497      1      0      1      0  ...       0       0        0        0         0         0   1   0     
+19181389          1   40.55            1  3.726898      1      0      0      0  ...       1       0        0        0         0         0   1   0     
+19182029          6  332.50            1  5.809643      0      0      0      1  ...       0       0        0        0         0         0   1   0     
+19132670          3   45.00            0  3.828641      0      0      0      0  ...       1       0        0        0         0         0   1   0     
+19118182          9  105.00            0  4.663439      1      0      0      0  ...       0       1        0        0         0         0   1   0     
+
+[5 rows x 117 columns]
+
+In [8]: s = SplitData(data=new_data)
+
+In [9]: s
+Out[9]:
+SplitData(data==          num_likes   price  we_love_tag    lprice  women  belts  boots  coats  ...  size_m  size_s  size_xl  size_xs  size_xxl  size_xxs  eu  uk
+id                                                                              ...
+19126896          7  180.00            1  5.198497      1      0      1      0  ...       0       0        0        0         0         0   1   0     
+19181389          1   40.55            1  3.726898      1      0      0      0  ...       1       0        0        0         0         0   1   0     
+19182029          6  332.50            1  5.809643      0      0      0      1  ...       0       0        0        0         0         0   1   0     
+19132670          3   45.00            0  3.828641      0      0      0      0  ...       1       0        0        0         0         0   1   0     
+19118182          9  105.00            0  4.663439      1      0      0      0  ...       0       1        0        0         0         0   1   0     
+...             ...     ...          ...       ...    ...    ...    ...    ...  ...     ...     ...      ...      ...       ...       ...  ..  ..     
+19201767          1   95.00            0  4.564348      1      0      0      0  ...       0       0        0        0         0         0   1   0     
+19062770          4   44.00            1  3.806662      1      0      0      0  ...       0       0        0        0         0         0   1   0     
+19210693         15   80.00            0  4.394449      1      1      0      0  ...       0       0        0        1         0         0   1   0     
+18970201         46  162.00            1  5.093750      1      0      0      0  ...       0       0        0        0         0         0   1   0     
+19216508          0  173.80            0  5.163642      1      0      0      0  ...       0       0        0        0         1         0   1   0     
+
+[9572 rows x 117 columns], targets=['price', 'lprice', 'we_love_tag', 'num_likes'], test_prop=0.3)
+
+In [10]: X = s.get_feature_vector()
+
+In [11]: X
+Out[11]:
+array([[1, 0, 1, ..., 0, 1, 0],
+       [1, 0, 0, ..., 0, 1, 0],
+       [0, 0, 0, ..., 0, 1, 0],
+       ...,
+       [1, 1, 0, ..., 0, 1, 0],
+       [1, 0, 0, ..., 0, 1, 0],
+       [1, 0, 0, ..., 0, 1, 0]], dtype=uint8)
+
+In [12]: y = s.get_targets()
+
+In [13]: X_train, X_test, y_train, y_test = s.split(X, y)
+
+In [14]: s.save(
+    ...: X=X_train,
+    ...: y=y_train,
+    ...: file_name="train.pkl"
+    ...: )
+
+In [15]: s.save(
     ...: X=X_test,
     ...: y=y_test,
     ...: file_name="test.pkl"
@@ -60,7 +104,11 @@ import numpy as np
 from pickle import load, dump 
 
 from enum import Enum 
-from typing import Dict, List
+from typing import (
+    Dict, 
+    Tuple, 
+    List
+)
 
 from sklearn.model_selection import train_test_split
 
@@ -72,13 +120,41 @@ class Target(Enum):
     WE_LOVE_TAG = "we_love_tag"
     NUM_LIKES = "num_likes"
 
+def read_data(file_name) -> pd.DataFrame: 
+    """Read the data file."""
+    file_path = BACKUP + "data/" + file_name
+    with open(file_path, "rb") as file: 
+        data = load(file)
+    return data 
+
+def to_dummies(data: pd.DataFrame) -> pd.DataFrame: 
+    """Convert categorical variables into dummies."""
+    return pd.get_dummies(
+        data=data, 
+        columns=[
+            "gender",
+            "sub_category",
+            "designer",
+            "condition",
+            "material",
+            "color",
+            "size",
+            "location"
+        ], 
+        drop_first=True, 
+        prefix="", 
+        prefix_sep=""
+    )
+
 class SplitData: 
     """Build and save training and testing sets."""
-    def __init__(self,
-     file_name: str,
-     test_prop: float = .3
+    def __init__(
+        self,
+        data: pd.DataFrame, 
+        test_prop: float = .3
      ):
-        self._file_name = file_name
+        self.data = data 
+        self._test_prop = test_prop 
         self._targets = [
             target.value 
             for target in (
@@ -88,40 +164,32 @@ class SplitData:
                 Target.NUM_LIKES
             )
         ]
-        self.data = self._read_data()
-        self._test_prop = test_prop 
         if self._test_prop <= 0 or self._test_prop >= 1: 
             raise ValueError("Test proportion needs to be between 0 and 1.")
 
-    def _read_data(self) -> pd.DataFrame: 
-        """Read the data file."""
-        file_path = BACKUP + "data/" + self._file_name
-        with open(file_path, "rb") as file: 
-            data = load(file)
-        return data 
-
     def __repr__(self) -> str:
-        return f"SplitData(file_name=={self._file_name}, targets={self._targets}, test_prop={self._test_prop})"
+        return f"SplitData(data=={self.data}, targets={self._targets}, test_prop={self._test_prop})"
 
-    def get_feature_vector(self): 
+    def get_feature_vector(self) -> np.ndarray: 
         """Return an array of features."""
         return self.data.drop(
             labels=self._targets, 
             axis=1
         ).values
 
-    def get_targets(self): 
+    def get_targets(self) -> np.ndarray: 
         """Return an array of target variables."""
         return self.data.loc[
             :, 
             self._targets
         ].values
 
-    def split(self, 
+    def split(
+        self, 
         X: np.ndarray,
         y: np.ndarray,
         random_state: float = 42
-    ): 
+    ) -> Tuple[np.ndarray]: 
         """Train/test split."""
         return train_test_split(
             X, y,  
@@ -151,9 +219,12 @@ class SplitData:
         with open(file_path , "wb") as file:
             dump(obj=data, file=file) 
 
-def load_data(file_name: str, target: Target = Target.PRICE): 
-    """Return X and y arrays."""
-    file_path = BACKUP + "data/" + file_name 
-    with open(file_path , "rb") as file:
-        data = load(file) 
-    return data["X"], data["y"][target.value] 
+def load_feature_vector(file_name: str) -> np.ndarray: 
+    """Return X array."""
+    data = read_data(file_name=file_name)
+    return data["X"] 
+
+def load_target(file_name: str, target: Target = Target.PRICE) -> np.ndarray: 
+    """Return y array."""
+    data = read_data(file_name=file_name)
+    return data["y"][target.value] 

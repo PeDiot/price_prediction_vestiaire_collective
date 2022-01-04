@@ -43,63 +43,63 @@ class ModelTraining:
     
     Example: 
 
-    In [1]: est = LinearRegression()
-    In [2]: param_grid = {'fit_intercept': True}
-    In [3]: training = ModelTraining(
-   ...: X=X_tr,
-   ...: y=y_tr,
-   ...: estimator=est,
-   ...: param_grid=param_grid,
-   ...: n_comp=50
+    In [1]: from vc_ml import (
+   ...: load_feature_vector,
+   ...: load_target,
+   ...: ModelTraining,
+   ...: Target
    ...: )
-   In [4]: p = training.init_pipeline()
-   In [5]: p
-   Out[5]: 
-   Pipeline(steps=[
-       (
-           'enc',
-            OneHotEncoder(
-                drop='first', 
-                handle_unknown='ignore',
-                sparse=False
-            )
-        ),
-        (
-            'pca', 
-            PCA(n_components=50)
-        ), 
-        (
-            'model',
-            LinearRegression()
-        )
-    ])
-    In [6]: training.cross_val_fit(p=p, cv=5)
-    [Parallel(n_jobs=7)]: Using backend LokyBackend with 7 concurrent workers...
-    Out[16]: 
-{'fit_time': array([0.23427629, 0.21670818, 0.21571112, 0.21584296, 0.24417901]),
- 'score_time': array([0.00982404, 0.01001382, 0.01001382, 0.00982404, 0.01001287]),
- 'estimator': [Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('pca', PCA(n_components=50)), ('model', LinearRegression())]),
-  Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('pca', PCA(n_components=50)), ('model', LinearRegression())]),
-  Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('pca', PCA(n_components=50)), ('model', LinearRegression())]),
-  Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('pca', PCA(n_components=50)), ('model', LinearRegression())]),
-  Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('pca', PCA(n_components=50)), ('model', LinearRegression())])],
- 'test_score': array([0.11987983, 0.17250853, 0.05587166, 0.1421948 , 0.08326009]),
- 'train_score': array([0.10265922, 0.09539385, 0.12307284, 0.10482568, 0.11259356])}
+
+    In [2]: from sklearn.linear_model import Ridge
+
+    In [3]: X_tr = load_feature_vector(file_name="train.pkl")
+
+    In [4]: y_tr = load_target(
+    ...: file_name="train.pkl",
+    ...: target=Target.NUM_LIKES
+    ...: )
+
+    In [5]: est = Ridge()
+
+    In [6]: params = {"alpha": .01, "fit_intercept": True}
+
+    In [7]: training = ModelTraining(
+    ...: X=X_tr,
+    ...: y=y_tr,
+    ...: estimator=est,
+    ...: params=params,
+    ...: n_comp=50
+    ...: )
+
+    In [8]: pipe = training.init_pipeline()
+
+    In [9]: pipe
+    Out[9]: Pipeline(steps=[('pca', PCA(n_components=50)), ('model', Ridge(alpha=0.01))])
+
+    In [10]: cv_results = training.cross_val_fit(p=pipe, cv=5)
+    [Parallel(n_jobs=7)]: Using backend LokyBackend with 7 concurrent workers.
+    [CV] END ..................., score=(train=0.106, test=0.091) total time=   0.1s
+    [CV] END ..................., score=(train=0.098, test=0.078) total time=   0.1s
+    [Parallel(n_jobs=7)]: Done   2 out of   5 | elapsed:    2.4s remaining:    3.6s
+    [CV] END ..................., score=(train=0.100, test=0.069) total time=   0.1s
+    [CV] END ..................., score=(train=0.090, test=0.097) total time=   0.1s
+    [CV] END ..................., score=(train=0.103, test=0.090) total time=   0.1s
+    [Parallel(n_jobs=7)]: Done   5 out of   5 | elapsed:    2.4s finished
+
+    In [11]: cv_results
+    Out[11]:
+    {'fit_time': array([0.19979906, 0.18805981, 0.17964172, 0.16840768, 0.20743465]),
+    'score_time': array([0.01279092, 0.01179409, 0.0090611 , 0.01211762, 0.00498939]),
+    'estimator': [Pipeline(steps=[('pca', PCA(n_components=50)), ('model', Ridge(alpha=0.01))]),
+    Pipeline(steps=[('pca', PCA(n_components=50)), ('model', Ridge(alpha=0.01))]),
+    Pipeline(steps=[('pca', PCA(n_components=50)), ('model', Ridge(alpha=0.01))]),
+    Pipeline(steps=[('pca', PCA(n_components=50)), ('model', Ridge(alpha=0.01))]),
+    Pipeline(steps=[('pca', PCA(n_components=50)), ('model', Ridge(alpha=0.01))])],
+    'test_score': array([0.06944281, 0.09702687, 0.09063966, 0.07798346, 0.09012322]),
+    'train_score': array([0.09994824, 0.09032111, 0.10575738, 0.09777393, 0.1027564 ])}
+
+    In [12]: training.check_pipe_backup(p=pipe)
+    Out[12]: False
     """
 
     def __init__(
@@ -107,35 +107,27 @@ class ModelTraining:
         X: np.ndarray, 
         y: np.ndarray, 
         estimator, 
-        param_grid: Dict,
+        params: Dict,
         n_comp: Optional[int] = None 
     ):
         self.X, self.y = X, y 
         self.estimator = estimator
-        self.param_grid = param_grid 
+        self.params = params 
         self.n_comp = n_comp
         self._backup_dir = BACKUP + "models/" + str(self.estimator).split("(")[0] + "/"
         self._key = hash(str(self)) 
 
     def __repr__(self) -> str:
-        return f"Training(X={self.X}, y={self.y}, estimator={repr(self.estimator)}, param_grid={self.param_grid}, n_comp={self.n_comp})"
+        return f"Training(X={self.X}, y={self.y}, estimator={repr(self.estimator)}, params={self.params}, n_comp={self.n_comp})"
 
     def _init_model(self): 
         """Initialize model from estimator and params grid."""
-        return self.estimator.set_params(**self.param_grid)
+        return self.estimator.set_params(**self.params)
 
     def init_pipeline(self): 
         """Return a pipeline with PCA as first step."""
         if self.n_comp is not None:
             steps = [
-                (
-                    "enc", 
-                    OneHotEncoder(
-                        drop="first",
-                        handle_unknown="ignore", 
-                        sparse=False
-                    )
-                ), 
                 (
                     "pca",
                     PCA(n_components=self.n_comp)
@@ -147,14 +139,6 @@ class ModelTraining:
             ]
         else:
             steps = [
-                (
-                    "enc", 
-                    OneHotEncoder(
-                        drop="first", 
-                        handle_unknown="ignore", 
-                        sparse=False
-                    )
-                ), 
                 (
                     "model", 
                     self._init_model()
@@ -214,20 +198,20 @@ def train_models(
         results["train_score"].append( np.mean(cv_results["train_score"]) )
         results["test_score"].append( np.mean(cv_results["test_score"]) )
 
-    estimators, params = config.init_models()
-    for est, p in zip(estimators, params):
-        grids = list(ParameterGrid(p))
-        for param_grid in grids: 
+    estimators, grids = config.init_models()
+    for est, g in zip(estimators, grids):
+        g = list(ParameterGrid(g))
+        for params in g: 
             if comp_grid is not None: 
                 for n_comp in comp_grid:
                     training = ModelTraining(
                         X=X_tr, 
                         y=y_tr, 
                         estimator=est,
-                        param_grid=param_grid, 
+                        params=params, 
                         n_comp=n_comp
                     )
-                    print(f"estimator: {training.estimator} - param_grid: {training.param_grid} - n_comp: {training.n_comp}")
+                    print(f"estimator: {training.estimator} - params: {training.params} - n_comp: {training.n_comp}")
                     p = training.init_pipeline()
                     if not training.check_pipe_backup(p):
                         cv_results = training.cross_val_fit(p=p, cv=cv)
@@ -238,9 +222,9 @@ def train_models(
                         X=X_tr, 
                         y=y_tr, 
                         estimator=est,
-                        param_grid=param_grid
+                        param_grid=params
                     )
-                print(f"Estimator: {training.estimator} - param_grid: {training.param_grid}")
+                print(f"Estimator: {training.estimator} - params: {training.params}")
                 p = training.init_pipeline()
                 if not training.check_pipe_backup(p):
                     cv_results = training.cross_val_fit(p=p, cv=cv)

@@ -3,27 +3,34 @@
 Machine Learning library to fit models on Vestiaire Collective data.
 
 Example: 
-In [1]: from vc_ml import SplitData
-In [2]: s = SplitData(file_name='vc_data_cleaned.pkl')
-In [3]: X = s.get_feature_vector()
-In [4]: y = s.get_targets()
-In [5]: X_train, X_test, y_train, y_test = s.split(X, y)
-In [6]: s.save(
-   ...: X=X_train,
-   ...: y=y_train,
-   ...: file_name='train.pkl'
+In [1]: from vc_ml import (
+   ...: read_data,
+   ...: to_dummies,
+   ...: SplitData,
+   ...: Target
    ...: )
-In [7]: s.save(
+In [2]: data = read_data(file_name="vc_data_cleaned.pkl")
+In [3]: new_data = to_dummies(data)
+In [4]: s = SplitData(data=new_data)
+In [5]: X = s.get_feature_vector()
+In [6]: y = s.get_targets()
+In [7]: X_train, X_test, y_train, y_test = s.split(X, y)
+In [8]: s.save(
+    ...: X=X_train,
+    ...: y=y_train,
+    ...: file_name="train.pkl"
+    ...: )
+In [9]: s.save(
     ...: X=X_test,
     ...: y=y_test,
     ...: file_name='test.pkl'
     ...: )
 
 In [2]: from vc_ml import (
-   ...:    ...: load_config,
-   ...:    ...: load_data,
-   ...:    ...: train_models
-   ...:    ...: )
+    ...: load_config,
+    ...: load_data,
+    ...: train_models
+    ...: )
 
 In [3]: config = load_config(file_name='config_init.yaml')
 
@@ -46,10 +53,10 @@ In [6]: y_tr
 Out[6]: array([ 126.  ,  450.  ,  470.  , ...,  170.  ,  346.17, 1800.  ])
 
 In [7]: train_models(
-   ...:    ...: X_tr=X_tr,
-   ...:    ...: y_tr=y_tr,
-   ...:    ...: config=config
-   ...:    ...: )
+    ...: X_tr=X_tr,
+    ...: y_tr=y_tr,
+    ...: config=config
+    ...: )
 estimator: DummyRegressor() - param_grid: {'strategy': 'mean'}
 [Parallel(n_jobs=7)]: Using backend LokyBackend with 7 concurrent workers...
 [Parallel(n_jobs=7)]: Done   5 out of   5 | elapsed:   11.1s finished
@@ -102,8 +109,11 @@ Out[7]:
 from .data import (
     BACKUP, 
     Target, 
+    read_data, 
+    to_dummies, 
     SplitData, 
-    load_data,
+    load_feature_vector, 
+    load_target,
 ) 
 
 from .estimators import ( 
