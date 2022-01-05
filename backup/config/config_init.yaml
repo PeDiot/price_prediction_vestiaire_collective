@@ -25,11 +25,11 @@ mlp:
   activation:
   - relu
   hidden_layer_sizes:
-  - - 100
+  - - 200
   learning_rate_init:
   - 0.001
   max_iter:
-  - 200
+  - 5000
   solver:
   - adam
 rf:

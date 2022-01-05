@@ -1,20 +1,40 @@
-mlp: 
-  activation:
-  - relu
-  - logistic
-  hidden_layer_sizes:
-  - - 100
-    - 100
-  - - 200
-  - - 50
-    - 100
-    - 50
-  learning_rate_init:
-  - .001
+gb:
+  criterion:
+  - friedman_mse
+  - squared_error
+  - mse
+  - mae
+  learning_rate:
+  - .1
   - .01
-  max_iter:
+  - .001
+  loss:
+  - squared_error
+  - absolute_error
+  - huber
+  max_depth:
+  - 3
+  - 5
+  - 10
+  - 15
+  - 20
+  - 100
+  min_samples_leaf:
+  - 1
+  - 5
+  - 10
+  - 15 
+  - 20
+  min_samples_split:
+  - 2
+  - 5 
+  - 10
+  - 15 
+  - 20
+  n_estimators:
+  - 250
+  - 500
+  - 750
   - 1000
-  - 5000
-  solver:
-  - adam
-  - sgd
+  tol:
+  - 0.001
