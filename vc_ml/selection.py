@@ -16,19 +16,13 @@ In [3]: cv_results = get_cv_results(files_path=paths)
 
 In [4]: get_best_estimator(cv_results=cv_results)
 Out[4]: 
-{'best_estimator': Pipeline(steps=[('enc',
-                  OneHotEncoder(drop='first', handle_unknown='ignore',
-                                sparse=False)),
-                 ('model', GradientBoostingRegressor(tol=0.001))]),
+{'best_estimator': Pipeline(steps=[('model', GradientBoostingRegressor(tol=0.001))]),
  'train_score': 0.5537342215324665,
  'test_score': 0.29123571363147027}
 
 In [5]: get_best_estimator(cv_results=cv_results, criterion="train")
 Out[5]: 
-{'best_estimator': Pipeline(steps=[('enc',
-                  OneHotEncoder(drop='first', handle_unknown='ignore',
-                                sparse=False)),
-                 ('model', DecisionTreeRegressor(max_features='auto'))]),
+{'best_estimator': Pipeline(('model', DecisionTreeRegressor(max_features='auto'))]),
  'train_score': 0.9744985506246093,
  'test_score': -0.14087415022162816}
 """

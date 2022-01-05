@@ -27,83 +27,30 @@ In [9]: s.save(
     ...: )
 
 In [2]: from vc_ml import (
-    ...: load_config,
-    ...: load_data,
-    ...: train_models
-    ...: )
+   ...: load_feature_vector,
+   ...: load_target,
+   ...: load_config,
+   ...: train_models
+   ...: )
 
-In [3]: config = load_config(file_name='config_init.yaml')
+In [3]: X_tr = load_feature_vector(file_name="train.pkl")
 
-In [4]:
+In [4]: y_tr = load_target(file_name="train.pkl")
 
-In [4]: X_tr, y_tr = load_data(file_name='train.pkl')
+In [5]: config = load_config()
 
-In [5]: X_tr
-Out[5]: 
-array([['women', 'shoes', 'heels', ..., 'pink', 'size_40', 'eu'],
-       ['women', 'shoes', 'sandals', ..., 'red', 'size_37', 'eu'],
-       ['women', 'shoes', 'sandals', ..., 'pink', 'size_39', 'eu'],
-       ...,
-       ['women', 'shoes', 'flats', ..., 'silver', 'size_40', 'eu'],
-       ['women', 'shoes', 'heels', ..., 'silver', 'size_38', 'uk'],
-       ['women', 'clothing', 'coats', ..., 'navy', 'size_xxl', 'eu']],
-      dtype=object)
-
-In [6]: y_tr
-Out[6]: array([ 126.  ,  450.  ,  470.  , ...,  170.  ,  346.17, 1800.  ])
+In [6]: config
+Out[6]: Config(lr=None, ridge=None, tree=None, rf=None, gb=GBEstimator(n_estimators=[250, 500, 750, 1000], min_samples_split=[2, 5, 10, 15, 20], min_samples_leaf=[1, 5, 10, 15, 20], max_depth=[3, 5, 10, 15, 20, 100], loss=['squared_error', 'absolute_error', 'huber'], learning_rate=[0.1, 0.01, 0.001], criterion=['friedman_mse', 'squared_error', 'mse', 'mae'], tol=[0.001]), mlp=None)
 
 In [7]: train_models(
-    ...: X_tr=X_tr,
-    ...: y_tr=y_tr,
-    ...: config=config
-    ...: )
-estimator: DummyRegressor() - param_grid: {'strategy': 'mean'}
+   ...: X_tr=X_tr, y_tr=y_tr,
+   ...: config=config,
+   ...: comp_grid=[40, 60, 80, None]
+   ...: )
+21600 parameter combinations to test for GradientBoostingRegressor().
+estimator: GradientBoostingRegressor() - params: {'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3,
+'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 250, 'tol': 0.001} - n_comp: 40
 [Parallel(n_jobs=7)]: Using backend LokyBackend with 7 concurrent workers...
-[Parallel(n_jobs=7)]: Done   5 out of   5 | elapsed:   11.1s finished
-Out[7]: 
-{'pipeline': [Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('model', DummyRegressor())]),
-  Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('model', LinearRegression())]),
-  Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('model', Ridge())]),
-  Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('model', DecisionTreeRegressor(max_features='auto'))]),
-  Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('model',
-                   RandomForestRegressor(max_samples=1.0, oob_score=True))]),
-  Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('model', GradientBoostingRegressor(tol=0.001))]),
-  Pipeline(steps=[('enc',
-                   OneHotEncoder(drop='first', handle_unknown='ignore',
-                                 sparse=False)),
-                  ('model', MLPRegressor(hidden_layer_sizes=[100]))])],
- 'train_score': [0.0,
-  0.27561146372517936,
-  0.2754115644408693,
-  0.9744985506246093,
-  0.8788006464491552,
-  0.5537342215324665,
-  0.27253550156933865],
- 'test_score': [-0.0002750862547341804,
-  0.2735945152729668,
-  0.275715773342255,
-  -0.14087415022162816,
-  0.2513063008716697,
-  0.29123571363147027,
-  0.29035041766619446]}
 """
 
 from .data import (
