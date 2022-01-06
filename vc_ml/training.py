@@ -47,7 +47,6 @@ class ModelTraining:
     ...: load_feature_vector,
     ...: load_target,
     ...: ModelTraining,
-    ...: Target
     ...: )
 
     In [2]: from sklearn.linear_model import Ridge
@@ -111,6 +110,9 @@ class ModelTraining:
     'test_score': array([0.15260963, 0.18946449, 0.06892803, 0.15654169, 0.07997544]),
     'train_score': array([0.11551795, 0.11138411, 0.13817636, 0.11410483, 0.13049429])}
 
+    In [14]: training.display_results(cv_results)
+    Out[14]: {'avg_train_score': 0.12040312046404515, 'avg_test_score': 0.1269623978424663}
+
     In [15]: training.save_cv_results(cv_results)
     """
 
@@ -126,17 +128,18 @@ class ModelTraining:
         self.estimator = estimator
         self.params = params 
         self.n_comp = n_comp
-        self._backup_dir = BACKUP + "models/" + str(self.estimator).split("(")[0] + "/"
+        self._estimator_name = self.estimator.__class__.__name__
+        self._backup_dir = BACKUP + "models/" + str(self._estimator_name) + "/"
         self._key = self._get_hash_key() 
 
     def __repr__(self) -> str:
-        return f"Training(X={self.X}, y={self.y}, estimator={repr(self.estimator)}, params={self.params}, n_comp={self.n_comp})"
+        return f"Training(estimator={repr(self.estimator)}, params={self.params}, n_comp={self.n_comp})"
     
     def _get_hash_key(self) -> str:
         """Return a unique key to identify the trained model.""" 
         return str(
             hash(
-                f"{self.estimator},{self.params},{self.n_comp}"
+                f"{self._estimator_name},{self.params},{self.n_comp}"
             )
         )
 
@@ -188,6 +191,16 @@ class ModelTraining:
             return True 
         return False  
 
+    def display_results(
+        self, 
+        cv_results: Dict, 
+    ):
+        """Show average train and test scores from cross-validation."""
+        return {
+            "avg_train_score": np.mean(cv_results["train_score"]), 
+            "avg_test_score": np.mean(cv_results["test_score"])
+        }
+
     def save_cv_results(
         self, 
         cv_results: Dict, 
@@ -203,37 +216,10 @@ def train_models(
     comp_grid: Optional[list[int]] = None 
 ): 
     """Train and save multiple models using pipeline, grid search and cross validation."""
-    results = {
-        "pipeline": [], 
-        "avg_train_score": [], 
-        "avg_test_score": []
-    }
-
-    def _fill_results_dict(cv_results: Dict) -> Dict: 
-        results["pipeline"].append(cv_results["estimator"][0])
-        results["avg_train_score"].append( np.mean(cv_results["train_score"]) )
-        results["avg_test_score"].append( np.mean(cv_results["test_score"]) )
-
-    def _display_num_combinations(
-        estimator, 
-        param_grids: List, 
-        comp_grid: Optional[List] = None
-    ) -> str: 
-        """Return a message with the number of combinations to test."""
-        if comp_grid is not None: 
-            msg = f"{len(comp_grid)*len(param_grids)} combinations to test for {estimator}."
-        else: 
-             msg = f"{len(param_grids)} combinations to test for {estimator}."
-        return msg
 
     estimators, grids = config.init_models()
     for est, g in zip(estimators, grids):
         g = list(ParameterGrid(g))
-        _display_num_combinations(
-            estimator=est, 
-            param_grids=g, 
-            comp_grid=comp_grid
-        )
         for params in g: 
             if comp_grid is not None: 
                 for n_comp in comp_grid:
@@ -244,12 +230,14 @@ def train_models(
                         params=params, 
                         n_comp=n_comp
                     )
+                    print(training)
                     if not training.check_backup():
                         p = training.init_pipeline()
-                        print(f"pipeline: {p}")
                         cv_results = training.cross_val_fit(p=p, cv=cv)
                         training.save_cv_results(cv_results)
-                        _fill_results_dict(cv_results)
+                        print( training.display_results(cv_results) )
+                    else: 
+                        print("Model already trained.")
             else:
                 training = ModelTraining(
                         X=X_tr, 
@@ -257,14 +245,14 @@ def train_models(
                         estimator=est,
                         params=params
                     )
+                print(training)
                 if not training.check_backup():
                     p = training.init_pipeline()
-                    print(f"pipeline: {p}")
                     cv_results = training.cross_val_fit(p=p, cv=cv)
                     training.save_cv_results(cv_results)
-                    _fill_results_dict(cv_results)
-                        
-    return results 
+                    print( training.display_results(cv_results) )
+                else: 
+                    print("Model already trained.")
 
 
         

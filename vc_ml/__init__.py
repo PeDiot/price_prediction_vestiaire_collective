@@ -3,6 +3,7 @@
 Machine Learning library to fit models on Vestiaire Collective data.
 
 Example: 
+
 In [1]: from vc_ml import (
    ...: read_data,
    ...: to_dummies,
@@ -26,6 +27,8 @@ In [9]: s.save(
     ...: file_name='test.pkl'
     ...: )
 
+set PYTHONHASHSEED=0
+
 In [2]: from vc_ml import (
    ...: load_feature_vector,
    ...: load_target,
@@ -43,13 +46,31 @@ In [6]: config
 Out[6]: Config(lr=None, ridge=None, tree=None, rf=None, gb=GBEstimator(n_estimators=[250, 500, 750, 1000], min_samples_split=[2, 5, 10, 15, 20], min_samples_leaf=[1, 5, 10, 15, 20], max_depth=[3, 5, 10, 15, 20, 100], loss=['squared_error', 'absolute_error', 'huber'], learning_rate=[0.1, 0.01, 0.001], criterion=['friedman_mse', 'squared_error', 'mse', 'mae'], tol=[0.001]), mlp=None)
 
 In [7]: train_models(
-   ...: X_tr=X_tr, y_tr=y_tr,
-   ...: config=config,
-   ...: comp_grid=[40, 60, 80, None]
-   ...: )
-21600 parameter combinations to test for GradientBoostingRegressor().
-estimator: GradientBoostingRegressor() - params: {'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3,
-'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 250, 'tol': 0.001} - n_comp: 40
+    ...: X_tr=X_tr,
+    ...: y_tr=y_tr,
+    ...: config=config,
+    ...: comp_grid=[40, 60, 80, None]
+    ...: )
+Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3, 
+'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 250, 'tol': 0.001}, n_comp=40)
+Model already trained.
+Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3, 
+'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 250, 'tol': 0.001}, n_comp=60)
+Model already trained.
+Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3, 
+'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 250, 'tol': 0.001}, n_comp=80)
+Model already trained.
+Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3,   
+'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 250, 'tol': 0.001}, n_comp=None)
+Model already trained.
+Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3, 
+'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 500, 'tol': 0.001}, n_comp=40)
+Model already trained.
+Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3,   
+'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 500, 'tol': 0.001}, n_comp=60)
+Model already trained.
+Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3,   
+'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 500, 'tol': 0.001}, n_comp=80)
 [Parallel(n_jobs=7)]: Using backend LokyBackend with 7 concurrent workers...
 """
 
