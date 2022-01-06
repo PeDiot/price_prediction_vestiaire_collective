@@ -29,7 +29,7 @@ mlp:
   learning_rate_init:
   - 0.001
   max_iter:
-  - 5000
+  - 100
   solver:
   - adam
 rf:
