@@ -8,6 +8,6 @@ The algorithm's prediction allows sellers to avoid wasting time in setting the p
 - by preventing him from selling at too low a price, 
 - by preventing him from not finding buyers because his price is too high.
 
-By helping sellers setting the "right" price, the algorithm allows buyers to find items sold at a price close to their willingness to pay.
+Besides, the algorithm allows buyers to find items sold at a price close to their willingness to pay by encouraging sellers to set the "right" price.
 
-For Vestiaire Collective, the price prediction tool ensures the volume and speed of transactions. The more transactions there are on the platform, the more commissions Vestiaire Collective receives. It also enhance user satisfaction: buyers find items that are priced to generate a surplus and sellers save time selling their items.
+For Vestiaire Collective, the price prediction tool ensures the volume and speed of transactions. The more transactions, the more commissions the platform earns. It also enhances user satisfaction: buyers find items that are priced to generate a surplus and sellers save time selling their items.
