@@ -1,17 +1,4 @@
-gb:
-  criterion:
-  - friedman_mse
-  - squared_error
-  - mse
-  - mae
-  learning_rate:
-  - .1
-  - .01
-  - .001
-  loss:
-  - squared_error
-  - absolute_error
-  - huber
+rf:
   max_depth:
   - 3
   - 5
@@ -19,6 +6,7 @@ gb:
   - 15
   - 20
   - 100
+  - null
   min_samples_leaf:
   - 1
   - 5
@@ -36,5 +24,16 @@ gb:
   - 500
   - 750
   - 1000
-  tol:
-  - 0.001
+  max_features:
+  - auto
+  - sqrt
+  - log2
+  max_samples:
+  - 1.0
+  - .8
+  - .5
+  criterion:
+  - squared_error
+  - absolute_error
+  oob_score:
+  - true

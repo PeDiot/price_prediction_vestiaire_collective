@@ -1,0 +1,39 @@
+gb:
+  criterion:
+  - friedman_mse
+  - squared_error
+  learning_rate:
+  - .1
+  - .01
+  - .001
+  loss:
+  - squared_error
+  - absolute_error
+  - huber
+  - quantile
+  max_depth:
+  - 3
+  - 5
+  - 10
+  - 15
+  - 20
+  - 100
+  min_samples_leaf:
+  - 1
+  - 5
+  - 10
+  - 15 
+  - 20
+  min_samples_split:
+  - 2
+  - 5 
+  - 10
+  - 15 
+  - 20
+  n_estimators:
+  - 250
+  - 500
+  - 750
+  - 1000
+  tol:
+  - 0.001
