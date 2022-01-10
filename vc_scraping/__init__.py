@@ -4,7 +4,7 @@ Library to scrap the Vestiaire Collective website.
 """
 
 from .methods import (
-    DIR, 
+    BACKUP_DIR, 
     BRANDS_DIR, 
     flatten_list, 
     load_json, 

@@ -8,7 +8,7 @@ Example:
 >>> from selenium import webdriver
 >>> from typing import List
 >>> brands_links = vcs.load_json(
-...     file_name="./backup/brands_links.json", 
+...     file_name="./backup/scraping/brands_links.json", 
 ...     data_type=List[vcs.BrandLink]
 ... )
 >>> acne = brands_links[0] 
@@ -94,8 +94,8 @@ class BrandPageScraper:
     def _get_catalog(self, soup: bs) -> str: 
         """Return the catalog of items."""
         catalog = soup.find(
-            name="ul", 
-            attrs={'class': 'catalog__gridContainer'}
+            name="div", 
+            attrs={'class': 'catalog__resultContainer'}
         )
         return str(catalog)
 

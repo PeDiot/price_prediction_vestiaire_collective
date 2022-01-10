@@ -13,8 +13,8 @@ from serde.json import from_json, to_json
 
 import os
 
-DIR = "C:/Users/pemma/OneDrive - Université de Tours/Mécen/M2/S1/02 - Machine Learning/05 - Projet/ML_Vestiaire_Collective"
-BRANDS_DIR = DIR + "/backup/scraping/brands"
+BACKUP_DIR = "./backup/scraping/"
+BRANDS_DIR = BACKUP_DIR + "brands/"
 
 def flatten_list(big_list: List[List]) -> List: 
     """Flatten a list of lists."""

@@ -2,8 +2,6 @@
 
 Sub-library to collect each item's description for all brands given a specific page.
 
-Example :
-
 """
 
 from os import listdir
@@ -54,7 +52,7 @@ class DescriptionScraper:
 
     def _get_items_url_and_id(self)-> Dict[str, List[str]]: 
         """Return the url to collect and the id related to each basic item.."""
-        file_path = f"{BRANDS_DIR}/{self._brand}/items/basic_items_p{self._page_no}.json"
+        file_path = f"{BRANDS_DIR}{self._brand}/items/basic_items_p{self._page_no}.json"
         basic_items_file = load_json(
             file_name=file_path,
             data_type=List[BasicItem]
@@ -85,7 +83,7 @@ class DescriptionScraper:
     
     def get_backup_file_name(self): 
         """Return the proper backup file name to store the ItemDesc objects."""
-        return f"{BRANDS_DIR}/{self._brand}/items/items_desc_p{self._page_no}.json"
+        return f"{BRANDS_DIR}{self._brand}/items/items_desc_p{self._page_no}.json"
            
 def save_items_desc_for_all_brands(
     brands: List[str], 

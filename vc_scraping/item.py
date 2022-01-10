@@ -86,7 +86,7 @@ class DescriptionParser:
     def __init__(self, brand: str, page_no: int) -> None:
         self._brand = brand 
         self._page_no = page_no 
-        self._path = f"{BRANDS_DIR}/{self._brand}/items/items_desc_p{self._page_no}.json"
+        self._path = f"{BRANDS_DIR}{self._brand}/items/items_desc_p{self._page_no}.json"
         self.data = load_json(
             file_name=self._path, 
             data_type=List[ItemDesc]
@@ -163,7 +163,7 @@ class DescriptionParser:
 
     def save(self, items: List[ItemAttrs]): 
         """Save a list of ItemAttrs objects."""
-        path = f"{BRANDS_DIR}/{self._brand}/items/items_attrs_p{self._page_no}.json"
+        path = f"{BRANDS_DIR}{self._brand}/items/items_attrs_p{self._page_no}.json"
         save_json(
             data=items, 
             file_name=path 

@@ -32,7 +32,7 @@ def find_paths(brand_name: str) -> str:
     ['./backup/brands/balenciaga/p1.json', './backup/brands/balenciaga/p10.json', ..., './backup/brands/balenciaga/p9.json'] 
     """ 
     paths = []
-    sub_dir = BRANDS_DIR + "/" + brand_name
+    sub_dir = BRANDS_DIR + brand_name
     pages = os.listdir(sub_dir)
     for page in pages: 
         if page != "items":
@@ -85,6 +85,9 @@ class PageParser:
         self._page_dir = page_dir
         self._page = load_json(file_name=page_dir, data_type=BrandPage)
         self.page_items = self._get_items_from_page()
+    
+    def __repr__(self) -> str:
+        return f"PageParser(page_dir={self._page_dir})"
 
     def _get_items_from_page(self): 
        """Return each item's source code from the page."""

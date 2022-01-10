@@ -21,10 +21,10 @@ Final dataset saved at ./backup/vc_data.pkl.
 """
 
 import pandas as pd 
-from .methods import DIR
+from.methods import BRANDS_DIR
 from .home_page import get_brands
 
-SAVE_PATH = DIR+"/backup/vc_data.pkl"
+SAVE_PATH = "./backup/data/vc_data.pkl"
 
 def make_dataset(num_pages: int = 6): 
     """Create the final dataset and save to pickle.
@@ -34,8 +34,8 @@ def make_dataset(num_pages: int = 6):
     d = pd.DataFrame() 
     for no in range(num_pages+1):
         for brand in get_brands(): 
-            basic_items_df = pd.read_json(f"{DIR}/backup/brands/{brand}/items/basic_items_p{no}.json")
-            items_attrs_df = pd.read_json(f"{DIR}/backup/brands/{brand}/items/items_attrs_p{no}.json")
+            basic_items_df = pd.read_json(f"{BRANDS_DIR}{brand}/items/basic_items_p{no}.json")
+            items_attrs_df = pd.read_json(f"{BRANDS_DIR}{brand}/items/items_attrs_p{no}.json")
             if items_attrs_df.shape[1] != 0 and basic_items_df.shape[1] != 0: 
                 temp = pd.merge(
                     left=basic_items_df, 
