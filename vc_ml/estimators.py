@@ -90,6 +90,7 @@ class TreeEstimator:
 @dataclass
 class RFEstimator: 
     n_estimators: Optional[list[int]] = field(default_factory=lambda: [100])  
+    criterion: Optional[list[str]] = field(default_factory=lambda: ["squared_error"])  
     max_depth: Optional[list[int]] = field(default_factory=lambda: [None])  
     min_samples_split: Optional[list[int]] = field(default_factory=lambda: [2])  
     min_samples_leaf: Optional[list[int]] = field(default_factory=lambda: [1])  

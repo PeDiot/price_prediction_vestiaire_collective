@@ -7,7 +7,8 @@ Example:
 In [1]: from vc_ml import (
    ...: get_files_path,
    ...: get_cv_results,
-   ...: get_best_estimator
+   ...: get_best_estimator, 
+   ...: save_best_estimator
    ...: )
 
 In [2]: paths = get_files_path()
@@ -16,15 +17,32 @@ In [3]: cv_results = get_cv_results(files_path=paths)
 
 In [4]: get_best_estimator(cv_results=cv_results)
 Out[4]: 
-{'best_estimator': Pipeline(steps=[('model', GradientBoostingRegressor(tol=0.001))]),
- 'train_score': 0.5537342215324665,
- 'test_score': 0.29123571363147027}
+{'best_estimator': Pipeline(steps=[('model',
+                  GradientBoostingRegressor(criterion='mse',
+                                            loss='absolute_error', max_depth=20,
+                                            min_samples_leaf=20,
+                                            min_samples_split=15,
+                                            n_estimators=750, tol=0.001))]),
+ 'train_score': 0.3558182825292002,
+ 'test_score': 0.3466649990038641,
+ 'avg_score': 0.3512416407665322}
 
 In [5]: get_best_estimator(cv_results=cv_results, criterion="train")
 Out[5]: 
-{'best_estimator': Pipeline(('model', DecisionTreeRegressor(max_features='auto'))]),
- 'train_score': 0.9744985506246093,
- 'test_score': -0.14087415022162816}
+{'best_estimator': Pipeline(steps=[('model', DecisionTreeRegressor(max_features='auto'))]),
+ 'train_score': 0.9744604159492696,
+ 'test_score': -0.9278878299719601,
+ 'avg_score': 0.023286292988654755}
+
+In [6]: get_best_estimator(cv_results=cv_results, criterion="train_test")
+Out[6]: 
+{'best_estimator': Pipeline(steps=[('pca', PCA(n_components=80)),
+                 ('model',
+                  GradientBoostingRegressor(min_samples_split=5,
+                                            n_estimators=1000, tol=0.001))]),
+ 'train_score': 0.9744604159492696,
+ 'test_score': 0.23604312714836778,
+ 'avg_score': 0.5532353841625166}
 """
 
 from enum import Enum
@@ -32,8 +50,10 @@ from typing import Dict, List
 
 import numpy as np 
 import pandas as pd 
-from os import listdir, pipe 
-from pickle import load
+from os import listdir, pipe
+from pickle import load, dump
+
+from sklearn.pipeline import Pipeline
 
 from .data import BACKUP
 
@@ -67,13 +87,19 @@ def get_cv_results(files_path: List[str]) -> pd.DataFrame:
     d = {
         "estimator": [], 
         "avg_train_score": [], 
-        "avg_test_score": []
+        "avg_test_score": [], 
+        "avg_score": [] 
     }
     for path in files_path:
         cv_data = _read_file(path)
-        d["estimator"].append( cv_data["estimator"][0] )
-        d["avg_train_score"].append( np.mean(cv_data["train_score"]) )
-        d["avg_test_score"].append( np.mean(cv_data["test_score"]) )
+        est = cv_data["estimator"][0]
+        train_score = np.mean(cv_data["train_score"])
+        test_score = np.mean(cv_data["test_score"]) 
+        score = np.mean([train_score, test_score])
+        d["estimator"].append(est)
+        d["avg_train_score"].append(train_score)
+        d["avg_test_score"].append(test_score)
+        d["avg_score"].append(score)
     return pd.DataFrame.from_dict(d) 
 
 def get_best_estimator(
@@ -83,6 +109,8 @@ def get_best_estimator(
     """Return the best estimator based on test or train score."""
     best_test_score = max(cv_results["avg_test_score"])
     best_train_score = max(cv_results["avg_train_score"])
+    best_avg_score = max(cv_results["avg_score"])
+
     res = dict()
     if criterion == "test":
         res["best_estimator"] = cv_results.loc[ 
@@ -94,7 +122,11 @@ def get_best_estimator(
             "avg_train_score"
         ].values.tolist()[0]
         res["test_score"] = best_test_score
-    if criterion == "train": 
+        res["avg_score"] = cv_results.loc[ 
+            cv_results["avg_test_score"] == best_test_score, 
+            "avg_score"
+        ].values.tolist()[0]
+    elif criterion == "train": 
         res["best_estimator"] = cv_results.loc[ 
             cv_results["avg_train_score"] == best_train_score, 
             "estimator"
@@ -104,4 +136,38 @@ def get_best_estimator(
             cv_results["avg_train_score"] == best_train_score, 
             "avg_test_score"
         ].values.tolist()[0]
+        res["avg_score"] = cv_results.loc[ 
+            cv_results["avg_train_score"] == best_train_score, 
+            "avg_score"
+        ].values.tolist()[0]
+    elif criterion == "train_test": 
+        res["best_estimator"] = cv_results.loc[ 
+            cv_results["avg_score"] == best_avg_score, 
+            "estimator"
+        ].values.tolist()[0]
+        res["train_score"] = cv_results.loc[ 
+            cv_results["avg_train_score"] == best_train_score, 
+            "avg_train_score"
+        ].values.tolist()[0]
+        res["test_score"] = cv_results.loc[ 
+            cv_results["avg_score"] == best_avg_score, 
+            "avg_test_score"
+        ].values.tolist()[0]
+        res["avg_score"] = best_avg_score
+    else: 
+        raise ValueError("Criterion takes the following values: 'test', 'train', 'train_test'.")
     return res 
+
+def save_best_estimator(best_estimator: Pipeline): 
+    """Save best estimator in a backup directory."""
+    path = BACKUP + "best_estimator.pkl"
+    with open(path, "wb") as file: 
+        dump(obj=best_estimator, file=file)
+
+def load_best_estimator(): 
+    """Load best estimator from backup directory."""
+    path = BACKUP + "best_estimator.pkl"
+    with open(path, "rb") as file: 
+        est = load(file=file)
+    return est 
+

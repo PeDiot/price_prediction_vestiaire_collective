@@ -93,7 +93,7 @@ class Config:
         return iter(self.__dict__.values())
 
     def __repr__(self) -> str:
-        return f"Config(lr={self.lr}, ridge={self.ridge}, tree={self.tree}, rf={self.rf}, gb={self.gb}, mlp={self.mlp})"
+        return f"Config(dum={self.dum}, lr={self.lr}, ridge={self.ridge}, tree={self.tree}, rf={self.rf}, gb={self.gb}, mlp={self.mlp})"
     
     def init_models(self) -> Tuple[List]:
         """Identify estimator and param grid."""

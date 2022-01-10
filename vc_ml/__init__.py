@@ -29,49 +29,52 @@ In [9]: s.save(
 
 set PYTHONHASHSEED=0
 
-In [2]: from vc_ml import (
+In [1]: from vc_ml import (
    ...: load_feature_vector,
    ...: load_target,
    ...: load_config,
-   ...: train_models
+   ...: train_models,
    ...: )
 
-In [3]: X_tr = load_feature_vector(file_name="train.pkl")
+In [2]: X_tr, y_tr = load_feature_vector(file_name="train.pkl"), load_target(file_name="train.pkl")
 
-In [4]: y_tr = load_target(file_name="train.pkl")
+In [4]: config = load_config(file_name="config_gb.yaml")
 
-In [5]: config = load_config()
+In [5]: train_models(
+   ...: X_tr=X_tr,
+   ...: y_tr=y_tr,
+   ...: config=config,
+   ...: cv=5,
+   ...: comp_grid=[40, 60, 80, None]
+   ...: )
+Training(estimator=GradientBoostingRegressor(), params={'criterion': 'squared_error', 'learning_rate': 0.01, 'loss': 'huber', 'max_depth': 15,        
+'min_samples_leaf': 5, 'min_samples_split': 10, 'n_estimators': 250, 'tol': 0.001}, n_comp=40)
+Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.001, 'loss': 'absolute_error', 'max_depth':   
+20, 'min_samples_leaf': 10, 'min_samples_split': 5, 'n_estimators': 1000, 'tol': 0.001}, n_comp=40)
+[Parallel(n_jobs=5)]: Using backend ThreadingBackend with 5 concurrent workers.
+[Parallel(n_jobs=5)]: Using backend ThreadingBackend with 5 concurrent workers...
 
-In [6]: config
-Out[6]: Config(lr=None, ridge=None, tree=None, rf=None, gb=GBEstimator(n_estimators=[250, 500, 750, 1000], min_samples_split=[2, 5, 10, 15, 20], min_samples_leaf=[1, 5, 10, 15, 20], max_depth=[3, 5, 10, 15, 20, 100], loss=['squared_error', 'absolute_error', 'huber'], learning_rate=[0.1, 0.01, 0.001], criterion=['friedman_mse', 'squared_error', 'mse', 'mae'], tol=[0.001]), mlp=None)
+In [1]: from vc_ml import (
+   ...: get_files_path,
+   ...: get_cv_results,
+   ...: get_best_estimator
+   ...: )
 
-In [7]: train_models(
-    ...: X_tr=X_tr,
-    ...: y_tr=y_tr,
-    ...: config=config,
-    ...: comp_grid=[40, 60, 80, None]
-    ...: )
-Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3, 
-'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 250, 'tol': 0.001}, n_comp=40)
-Model already trained.
-Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3, 
-'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 250, 'tol': 0.001}, n_comp=60)
-Model already trained.
-Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3, 
-'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 250, 'tol': 0.001}, n_comp=80)
-Model already trained.
-Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3,   
-'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 250, 'tol': 0.001}, n_comp=None)
-Model already trained.
-Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3, 
-'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 500, 'tol': 0.001}, n_comp=40)
-Model already trained.
-Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3,   
-'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 500, 'tol': 0.001}, n_comp=60)
-Model already trained.
-Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_mse', 'learning_rate': 0.1, 'loss': 'squared_error', 'max_depth': 3,   
-'min_samples_leaf': 1, 'min_samples_split': 2, 'n_estimators': 500, 'tol': 0.001}, n_comp=80)
-[Parallel(n_jobs=7)]: Using backend LokyBackend with 7 concurrent workers...
+In [2]: paths = get_files_path()
+
+In [3]: cv_results = get_cv_results(files_path=paths)
+
+In [4]: get_best_estimator(cv_results=cv_results)
+Out[4]: 
+{'best_estimator': Pipeline(steps=[('model',
+                  GradientBoostingRegressor(criterion='mse',
+                                            loss='absolute_error', max_depth=20,
+                                            min_samples_leaf=20,
+                                            min_samples_split=15,
+                                            n_estimators=750, tol=0.001))]),
+ 'train_score': 0.3558182825292002,
+ 'test_score': 0.3466649990038641,
+ 'avg_score': 0.3512416407665322}
 """
 
 from .data import (
@@ -111,5 +114,7 @@ from .selection import (
     get_files_path, 
     get_cv_results,
     get_best_estimator, 
+    save_best_estimator,
+    load_best_estimator,
 )
 

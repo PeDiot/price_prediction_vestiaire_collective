@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from pickle import dump 
 import os
+from random import shuffle
 
 from rich.table import Table 
 from rich import print
@@ -35,6 +36,8 @@ from .data import (
 )
 
 from .config import Config
+
+from joblib import Parallel, delayed
 
 CPU_COUNT = os.cpu_count()
          
@@ -122,12 +125,13 @@ class ModelTraining:
         y: np.ndarray, 
         estimator, 
         params: Dict,
-        n_comp: Optional[int] = None 
+        n_comp: Optional[int] = None
     ):
         self.X, self.y = X, y 
         self.estimator = estimator
         self.params = params 
         self.n_comp = n_comp
+        
         self._estimator_name = self.estimator.__class__.__name__
         self._backup_dir = BACKUP + "models/" + str(self._estimator_name) + "/"
         self._key = self._get_hash_key() 
@@ -182,7 +186,7 @@ class ModelTraining:
             return_estimator=True,
             return_train_score=True, 
             verbose=3, 
-            n_jobs=CPU_COUNT-1
+            n_jobs=max(5, cv)
         )
 
     def check_backup(self) -> bool:
@@ -212,47 +216,58 @@ def train_models(
     X_tr: np.ndarray, 
     y_tr: np.ndarray,
     config: Config, 
-    cv: float = 5, 
+    cv: float = 5,  
     comp_grid: Optional[list[int]] = None 
 ): 
     """Train and save multiple models using pipeline, grid search and cross validation."""
 
-    estimators, grids = config.init_models()
-    for est, g in zip(estimators, grids):
-        g = list(ParameterGrid(g))
-        for params in g: 
-            if comp_grid is not None: 
-                for n_comp in comp_grid:
-                    training = ModelTraining(
-                        X=X_tr, 
-                        y=y_tr, 
-                        estimator=est,
-                        params=params, 
-                        n_comp=n_comp
-                    )
-                    print(training)
-                    if not training.check_backup():
-                        p = training.init_pipeline()
-                        cv_results = training.cross_val_fit(p=p, cv=cv)
-                        training.save_cv_results(cv_results)
-                        print( training.display_results(cv_results) )
-                    else: 
-                        print("Model already trained.")
-            else:
+    def _process(est, params: List): 
+        """Cross-validation process to parallelize."""
+        if comp_grid is not None: 
+            for n_comp in comp_grid:
                 training = ModelTraining(
-                        X=X_tr, 
-                        y=y_tr, 
-                        estimator=est,
-                        params=params
-                    )
+                    X=X_tr, 
+                    y=y_tr, 
+                    estimator=est,
+                    params=params, 
+                    n_comp=n_comp
+                )
                 print(training)
                 if not training.check_backup():
                     p = training.init_pipeline()
-                    cv_results = training.cross_val_fit(p=p, cv=cv)
+                    cv_results = training.cross_val_fit(p, cv)
                     training.save_cv_results(cv_results)
                     print( training.display_results(cv_results) )
                 else: 
                     print("Model already trained.")
+        else:
+            training = ModelTraining(
+                    X=X_tr, 
+                    y=y_tr, 
+                    estimator=est,
+                    params=params
+                )
+            print(training)
+            if not training.check_backup():
+                p = training.init_pipeline()
+                cv_results = training.cross_val_fit(p, cv)
+                training.save_cv_results(cv_results)
+                print( training.display_results(cv_results) )
+            else: 
+                print("Model already trained.")
+
+    n_jobs = CPU_COUNT - max(cv, 5) - 1
+    estimators, grids = config.init_models()
+    for estimator, grid in zip(estimators, grids):
+        estimator = [ estimator for _ in range(len(grid)) ]
+        grid = list(ParameterGrid(grid))
+        shuffle(grid)
+        Parallel(
+            n_jobs=n_jobs
+        )(
+            delayed(_process)(est, params)
+            for (est, params) in zip(estimator, grid)
+        ) 
 
 
         
