@@ -35,7 +35,7 @@ The algorithm's prediction allows him to avoid wasting time in setting the price
 
 ### For potential buyers
 
-The algorithm's prediction of the market price is also an approximation of the *willingness to pay of buyers for a given type of item. By helping sellers set the "right" price, the algorithm allows buyers to find items sold at a price close to their willingness to pay.
+The algorithm's prediction of the market price is also an approximation of the *willingness to pay* of buyers for a given type of item. By helping sellers set the "right" price, the algorithm allows buyers to find items sold at a price close to their willingness to pay.
 
 ### For Vestiaire Collective 
 
