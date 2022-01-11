@@ -1,65 +1,56 @@
-<style>
-img[alt~="center"] {
-  display: block;
-  margin: 0 auto;
-}
-</style>
-
 # Decision Support for Pricing of Second-Hand Items
 
-<<<<<<< HEAD
 ## Introduction
 
----
+<br/>
 
 ### Vestiaire Collective
 
-- Plateforme digitale du luxe de seconde main
-- Mise en relation de vendeurs et de potentiels acheteurs
-- Certification de l'authenticité des articles mis en vente $\rightarrow$ réduction du problème d'asymétrie d'information 
+[Vestiaire Collective](https://fr.vestiairecollective.com/) is a platform on which second-hand fashion items are traded. Its objective is to connect sellers and buyers while certifying the authenticity of the products offered by the sellers. This platform allows to remove the problem of asymetric information related to the sale of luxury products. 
 
 <br/>
 
 ### Objectif du projet
 
-Implémenter un algorithme de *machine learning* permettant d'**estimer le prix d'un article de luxe de seconde main** afin d'aider les utilisateurs à fixer le "bon" prix lorsqu'ils mettent en vente un article sur la plateforme Vestiaire Collective
+Implement a machine learning algorithm to **estimate the price of a second-hand luxury item** in order to help users set the "right" price when they put an item on sale on the Vestiaire Collective platform.
 
 <br/>
 
 ### Motivations
 
-| Vendeur   |      Acheteur      | Vestiaire Collective    |
-|:-|:-|:-|
-|Gain de temps |  Trouver des articles vendus à un prix proche de leur disposition à payer   | Augmenter le volume de transactions            | 
-|Minimiser le risque de vendre à un prix trop bas/élevé  |    | Satisfaction des utilisateurs     | 
+The algorithm's prediction allows sellers to avoid wasting time in setting the price. This decision support helps him to maximize his profits by preventing him from selling at too low a price or not finding buyers because his price is too high.
+
+Besides, the algorithm allows buyers to find items sold at a price close to their willingness to pay by encouraging sellers to set the "right" price.
+
+For Vestiaire Collective, the price prediction tool ensures the volume and speed of transactions. The more transactions, the more commissions the platform earns. It also enhances user satisfaction: buyers find items that are priced to generate a surplus and sellers save time selling their items. 
 
 <br/>
 
 ### Méthode 
 
-1. Collecte des données depuis le [site](https://fr.vestiairecollective.com/) de Vestiaire Collective
+1. Data collection from Vestiaire Collective [website](https://fr.vestiairecollective.com/)
 
-2. Nettoyage des données et *feature engineering* pour construire une base de données fiable et utilisable
+2. Data cleaning and feature engineering to build a reliable data set
 
-3. Entrainement et optimisation d'algorithmes de *machine learning*
+3. Model training and parameter tuning
 
-4. Choix du meilleur modèle et prise de décision
+4. Model selection and decision-making
 
 <br/>
 
 ## Collecte des données
 
----
+<br/>
 
 ### Méthode
 
-Sélection des **35 premières marques** de la rubrique [Notre Sélection](https://fr.vestiairecollective.com/marques/) 
+Selection of the **35 first brands** from the (https://fr.vestiairecollective.com/marques/) section
 
-Création d'une librairie python `vc_scraping` pour créer la base de données :
-- Sauvegarde des **10 premières pages** d'articles pour chaque marque et des pages web de chaque article dans des dataclasses sérializables
-- Identification et stockage des caractéristiques (prix, marque, nombre de *likes*, etc.) de chaque article dans des dataclasses sérializables
+Implementation of a python library `vc_scraping` to collect data and create the data set:
+- Saving the **10 first pages** of articles for each brand and the web pages of each article in serializable dataclasses
+- Identification and storage of each item's characteristics (price, brand, number of *likes*, etc.) in serializable dataclasses
 
-Exemple via la commande `python -m vc_scraping`
+Example with `python -m vc_scraping`
 
 <br/>
 
@@ -67,9 +58,9 @@ Exemple via la commande `python -m vc_scraping`
 
 <br/>
 
-### Description des données collectées
+### Data description
 
-Base de données obtenue après les phases de *scraping* et *parsing* via la fonction `make_dataset` de la librairie `vc_scraping`
+Data set obtained after the scraping and parsing stages via the `make_dataset` function of the `vc_scraping` library
 
 | Variable   |      Type      | Description    |
 |:-|:-|:-|
@@ -91,8 +82,7 @@ Base de données obtenue après les phases de *scraping* et *parsing* via la fon
 
 <br/>
 
-## Analyse & Traitement des données
----
+## Data analysis and cleaning
 
 <br/>
 
@@ -118,7 +108,7 @@ Base de données obtenue après les phases de *scraping* et *parsing* via la fon
 
 ## Implémentation des modèles de régression via `sklearn`
 
----
+
 
 <br/>
 
@@ -178,7 +168,7 @@ Exemple en ligne de commande via `python -m vc_ml`
 
 ## Choix du meilleur modèle
 
----
+
 
 <br/>
 
@@ -227,7 +217,7 @@ $\rightarrow$ `GradientBoostingRegressor` sans ACP préalable
 
 ## Conclusion sur le projet
 
----
+
 
 <br/>
 
@@ -247,19 +237,5 @@ Identification d'un modèle pouvant être utilisé en **aide à la décision** p
 ### Axes d'amélioration
 
 - Collecter plus d'articles pour améliorer la force de prédiction des modèles entrainés
-<br/>
 - Entrainer des modèles plus avancés tels que des algorithmes de *deep learning*
-<br/>
 - Créer un **interface graphique** (GUI ou CLI) permettant à l'utilisateur d'entrer les caractéristiques de son article pour lui renvoyer ensuite un prix estimé et des annonces similaires
-
-=======
-[Vestiaire Collective](https://fr.vestiairecollective.com/) is a platform on which second-hand fashion items are traded. Its objective is to connect sellers and buyers while certifying the authenticity of the products offered by the sellers. This platform allows to remove the problem of asymetric information related to the sale of luxury products.
-
-This project aims to help sellers set the right price when they want to put an item on sale on Vestiaire Collective. 
-
-The algorithm's prediction allows sellers to avoid wasting time in setting the price. This decision support helps him to maximize his profits by preventing him from selling at too low a price or not finding buyers because his price is too high.
->>>>>>> 4d2c8fa9aae46e4aa7e715c6e8a1d184b633ded8
-
-Besides, the algorithm allows buyers to find items sold at a price close to their willingness to pay by encouraging sellers to set the "right" price.
-
-For Vestiaire Collective, the price prediction tool ensures the volume and speed of transactions. The more transactions, the more commissions the platform earns. It also enhances user satisfaction: buyers find items that are priced to generate a surplus and sellers save time selling their items.
