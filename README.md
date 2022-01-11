@@ -168,8 +168,6 @@ Exemple en ligne de commande via `python -m vc_ml`
 
 ## Choix du meilleur modèle
 
-
-
 <br/>
 
 ### Méthode
@@ -208,16 +206,13 @@ $\rightarrow$ `GradientBoostingRegressor` sans ACP préalable
 ### Apport du *machine learning*
 
 - Augmentation significative du score en test entre `GradientBoostingRegressor` et modèle de base tel que le `DummyRegressor` (prédiction par la moyenne) : **on passe de 0 à 0.43** 
-<br/>
 - Cependant, **seulement 43% de la variabilité des prix est expliquée par les variables explicatives utilisées dans le modèle**
-<br/>
+
 - Difficulté à prédire les articles à prix élevé 
 
 <br/>
 
 ## Conclusion sur le projet
-
-
 
 <br/>
 
@@ -238,4 +233,3 @@ Identification d'un modèle pouvant être utilisé en **aide à la décision** p
 
 - Collecter plus d'articles pour améliorer la force de prédiction des modèles entrainés
 - Entrainer des modèles plus avancés tels que des algorithmes de *deep learning*
-- Créer un **interface graphique** (GUI ou CLI) permettant à l'utilisateur d'entrer les caractéristiques de son article pour lui renvoyer ensuite un prix estimé et des annonces similaires
