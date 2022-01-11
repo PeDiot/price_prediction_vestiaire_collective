@@ -1,95 +1,255 @@
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
 # Decision Support for Pricing of Second-Hand Items
 
+## Introduction
 
-## Data source
+---
 
+### Vestiaire Collective
 
-[Vestiaire Collective](https://fr.vestiairecollective.com/) is a platform on which second-hand fashion items are traded. Its objective is to connect sellers and buyers while certifying the authenticity of the products offered by the sellers. This platform allows to remove the problem of asymetric information related to the sale of luxury products.
+- Plateforme digitale du luxe de seconde main
+- Mise en relation de vendeurs et de potentiels acheteurs
+- Certification de l'authenticité des articles mis en vente $\rightarrow$ réduction du problème d'asymétrie d'information 
 
+<br/>
 
-## Goal 
+### Objectif du projet
 
-This project aims to help sellers set the right price when they want to put an item on sale on Vestiaire Collective. 
+Implémenter un algorithme de *machine learning* permettant d'**estimer le prix d'un article de luxe de seconde main** afin d'aider les utilisateurs à fixer le "bon" prix lorsqu'ils mettent en vente un article sur la plateforme Vestiaire Collective
 
-Stages of the sales process:
+<br/>
 
-1. The seller fills in the characteristics of the product.
-2. The seller sets a price for his product.
-3. The *machine learning* algorithm predicts the price based on the product characteristics. This prediction serves as a *benchmark*.
-4. The *benchmark* price is sent back to the user to help him choose the right price. 
-5. Extension: 
-    - Ads similar to the product the seller wants to sell are also returned as a comparison.
-    - Prediction of the number of likes received by the article. 
-    - Prediction of whether the article will be a favorite of the platform. 
+### Motivations
 
+| Vendeur   |      Acheteur      | Vestiaire Collective    |
+|:-|:-|:-|
+|Gain de temps |  Trouver des articles vendus à un prix proche de leur disposition à payer   | Augmenter le volume de transactions            | 
+|Minimiser le risque de vendre à un prix trop bas/élevé  |    | Satisfaction des utilisateurs     | 
 
-## Project challenges
+<br/>
 
+### Méthode 
 
-### For the seller 
+1. Collecte des données depuis le [site](https://fr.vestiairecollective.com/) de Vestiaire Collective
 
-The algorithm's prediction allows him to avoid wasting time in setting the price. This decision support maximizes his profits :
-- by preventing him from selling at too low a price, 
-- by preventing him from not finding buyers because his price is too high.
+2. Nettoyage des données et *feature engineering* pour construire une base de données fiable et utilisable
 
+3. Entrainement et optimisation d'algorithmes de *machine learning*
 
-### For potential buyers
+4. Choix du meilleur modèle et prise de décision
 
-The algorithm's prediction of the market price is also an approximation of the *willingness to pay* of buyers for a given type of item. By helping sellers set the "right" price, the algorithm allows buyers to find items sold at a price close to their willingness to pay.
+<br/>
 
-### For Vestiaire Collective 
+## Collecte des données
 
-**Profit maximization**: help in setting prices ensures the volume and speed of transactions. The more transactions there are on the platform, the more commissions Vestiaire Collective receives.
+---
 
-**User satisfaction**: Buyers find items that are priced to generate a surplus and sellers save time selling their items.
+### Méthode
 
+Sélection des **35 premières marques** de la rubrique [Notre Sélection](https://fr.vestiairecollective.com/marques/) 
 
-## Collected data  
+Création d'une librairie python `vc_scraping` pour créer la base de données :
+- Sauvegarde des **10 premières pages** d'articles pour chaque marque et des pages web de chaque article dans des dataclasses sérializables
+- Identification et stockage des caractéristiques (prix, marque, nombre de *likes*, etc.) de chaque article dans des dataclasses sérializables
 
+Exemple via la commande `python -m vc_scraping`
+
+<br/>
+
+![width:1150px height:640px](imgs/vc_scraping.gif)
+
+<br/>
+
+### Description des données collectées
+
+Base de données obtenue après les phases de *scraping* et *parsing* via la fonction `make_dataset` de la librairie `vc_scraping`
 
 | Variable   |      Type      | Description    |
-|:---------- |:------------- |:------------- |
-| `id`         |  int        | item id               | 
-| `url`        |   string    | link of the item's ad             | 
-| `num_likes`   | int  | number of *likes* received by the article               | 
-| `price` | float | item's price |
-| `we_love_tag` | bool | indicates if the item is a favorite of Vestiaire Collective |
-| `online_date` | datetime | date of online publication | 
-| `gender` | bool | item's type | 
-| `category` | category | item's category (shoes, clothing, bags, etc.) | 
-|  `sub_category` | category | item's sub-category (shirt, jeans, trainers, etc.) | 
-| `designer` | category | item's brand | 
-| `condition` | category | item's condition |
-| `material` | category | materials used to make the item | 
-| `color` | category | color of the item | 
-| `size` | category | item's size (M, L, 40, etc.) | 
-| `location` | category ou string | seller's location | 
+|:-|:-|:-|
+| `id`         |  int        | Numéro d'identification de l'article              | 
+| `url`        |   string    | Lien de la page web de l'article          | 
+| `num_likes`   | int  | Nombre de *likes* reçu par l'article
+| `price` | float | Prix |
+| `we_love_tag` | bool | Indique si l'article est un coup de coeur de Vestiaire Collective |
+| `online_date` | datetime | Date de mise en ligne |
+| `gender` | bool | Genre (homme, femme, enfant) | 
+| `category` | category | Catégorie (chaussures, vêtement, accessoires, etc.) | 
+|  `sub_category` | category | Sous-catégorie (baskets, chemises, jeans, etc.) | 
+| `designer` | category | Marque de l'article | 
+| `condition` | category | Etat de l'article |
+| `material` | category | Matériaux composant l'article | 
+| `color` | category | Couleur | 
+| `size` | category | Taille (M, L, 40, etc.) | 
+| `location` | category | Localisation du vendeur | 
 
+<br/>
 
-## Implementation 
+## Analyse & Traitement des données
+---
 
-### Predict the price
+<br/>
 
-Explanatory variables: product characteristics excluding `id`, `url`, `online_date`
+### Visualisation de la variable cible `price`
 
-Target: `price`
+<br/>
 
-Optimization of several regression models to determine the best-fitting relationship between the target and the explanatory variables
+![center](imgs/price_distribution.png)
 
-Choice of the best model, training on the data set and saving
+<br/>
 
-### Predict `we_love_tag` and `num_likes`
+### Nettoyage des données
 
-When a new article is put online, we have no information neither on the `we_love_tag` nor the `num_likes` variables: 
+- Suppression des catégories peu représentées dans chaque variable
+- Traitement de la variable `size` : 
 
-- Classification model would consist in predicting whether the article will be a favorite of Vestiaire Collective.
-- Regression model to forecast the number of likes that can be received by a new item. 
+  - Echelle "S, M, L" pour les vêtements
+  - Echelle "36, 40, 44" pour les chaussures
 
-Targets: `num_likes` and `we_love_tag` 
+- Transformation des variables catégorielles en variables binaires avec la fonction `pd.get_dummies`
 
-## User Interface
+<br/>
 
-GUI (Graphical User Interface) or CLI (Command Line Interface)
+## Implémentation des modèles de régression via `sklearn`
+
+---
+
+<br/>
+
+### Objectif & Méthode
+
+**Objectif** : identifier un modèle expliquant au mieux la relation entre le prix d'un article et ses caractéristiques
+
+**Méthode** : création d'une librairie `vc_ml` pour entrainer des modèles de *machine learning* de manière automatique et choisir l'estimateur le plus adapté aux données
+
+<br/>
+
+### Présentation de la librairie `vc_ml`
+
+- `data.py` : créer les échantillons d'apprentissage et test
+- `estimators.py` : définir les estimateurs sous forme de dataclasses
+- `config.py` : configuration des modèles à entrainer avec pour chaque modèle la grille de paramètres à tester
+- `training.py` 
+  - Classe d'entrainement d'un modèle et de ses paramètres
+  - Fonction pour entrainer plusieurs modèles
+- `selection.py` : fonctions pour la sélection du meilleur modèle
+
+<br/>
+
+### Apprentissage automatisé
+
+Chaque estimateur est une dataclass sérialisable dont les arguments sont les paramètres associés à l'estimateur
+
+Les estimateurs sont stockés dans un fichier de configuration au format `yaml` via la dataclass `Config`
+
+Exemple pour la configuration d'un modèle de type `GradientBoostingRegressor`
+
+```
+In [1]: from vc_ml import load_config
+In [2]: config = load_config(file_name="config_gb.yaml")
+In [3]: config
+Out[3]: Config(lr=None, ridge=None, tree=None, rf=None, gb=GBEstimator(n_estimators=[250, 500, 750, 1000], ...), mlp=None)
+
+```
+
+Utilisation de la classe `ModelTraining` pour : 
+
+- Créer une *pipeline* avec possibilité d'effectuer une ACP sur la matrice des variables explicatives 
+- Entrainer un estimateur pour une combinaison de paramètres donnée via cross-validation
+- Sauvegarder le modèle entrainé en lui attribuant un nom unique et identifiable
+
+Utilisation de la fonction `train_models` pour entrainer plusieurs modèles avec pour chaque modèle, différentes combinaisons de paramètres à tester
+
+La fonction permet aussi de spécifier une liste de valeurs à tester pour l'argument `n_components` de la classe `PCA`
+
+Exemple en ligne de commande via `python -m vc_ml` 
+
+<br/>
+
+![width:1150px height:640px](imgs/vc_ml.gif)
+
+<br/>
+
+## Choix du meilleur modèle
+
+---
+
+<br/>
+
+### Méthode
+
+- Récupération des modèles et des scores stockés dans un dossier backup à l'aide de la fonction `get_cv_results`
+- Identification du meilleur modèle par la fonction `get_best_estimator` avec 3 critères possibles : 
+
+  - Score d'entrainement
+  - Score de test
+  - Score moyen 
+
+$\rightarrow$ `GradientBoostingRegressor` sans ACP préalable
+
+<br/>
+
+### Paramètres du `GradientBoostingRegressor`
+
+- `n_estimators` : 250
+- `max_depth` : 10
+- `min_samples_split` : 20
+- `min_samples_leaf` : 5
+- `learning_rate` : 0.1
+- `loss` : "huber"
+- `criterion` : "squared_error"
+
+<br/>
+
+### Visualisation des résultats du `GradientBoostingRegressor`
+
+<br/>
+
+![center](imgs/prediction_plot.png)
+
+<br/>
+
+### Apport du *machine learning*
+
+- Augmentation significative du score en test entre `GradientBoostingRegressor` et modèle de base tel que le `DummyRegressor` (prédiction par la moyenne) : **on passe de 0 à 0.43** 
+<br/>
+- Cependant, **seulement 43% de la variabilité des prix est expliquée par les variables explicatives utilisées dans le modèle**
+<br/>
+- Difficulté à prédire les articles à prix élevé 
+
+<br/>
+
+## Conclusion sur le projet
+
+---
+
+<br/>
+
+### Apports techniques
+
+- Collecter des informations de manière quasiment automatique sur Vestiaire Collective
+- Automatiser l'entrainement de modèles de régression, leur sauvegarde et le choix du meilleur estimateur
+
+<br/>
+
+### Apport business
+
+Identification d'un modèle pouvant être utilisé en **aide à la décision** pour la fixation du prix mais restreint dans sa capacité à déterminer le "bon" prix
+
+<br/>
+
+### Axes d'amélioration
+
+- Collecter plus d'articles pour améliorer la force de prédiction des modèles entrainés
+<br/>
+- Entrainer des modèles plus avancés tels que des algorithmes de *deep learning*
+<br/>
+- Créer un **interface graphique** (GUI ou CLI) permettant à l'utilisateur d'entrer les caractéristiques de son article pour lui renvoyer ensuite un prix estimé et des annonces similaires
 
 
 
