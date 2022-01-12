@@ -116,7 +116,7 @@ def get_cv_results(files_path: List[str]) -> pd.DataFrame:
     return pd.concat(
         objs=cv_res_list, 
         axis=0
-    ) 
+    ).reset_index()
 
 def get_best_estimator(
     cv_results: pd.DataFrame, 
