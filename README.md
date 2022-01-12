@@ -1,20 +1,14 @@
-# Decision Support for Pricing of Second-Hand Items
+# Decision Support for Pricing of Second-Hand Luxury Fashion Items
 
 ## Introduction
 
-<br/>
-
 ### Vestiaire Collective
 
-[Vestiaire Collective](https://fr.vestiairecollective.com/) is a platform on which second-hand fashion items are traded. Its objective is to connect sellers and buyers while certifying the authenticity of the products offered by the sellers. This platform allows to remove the problem of asymetric information related to the sale of luxury products. 
+Vestiaire Collective is a platform on which second-hand fashion items are traded. Its objective is to connect sellers and buyers while certifying the authenticity of the products offered by the sellers. This platform allows to remove the problem of asymetric information related to the sale of luxury products. 
 
-<br/>
-
-### Objectif du projet
+### Purpose
 
 Implement a machine learning algorithm to **estimate the price of a second-hand luxury item** in order to help users set the "right" price when they put an item on sale on the Vestiaire Collective platform.
-
-<br/>
 
 ### Motivations
 
@@ -24,9 +18,9 @@ Besides, the algorithm allows buyers to find items sold at a price close to thei
 
 For Vestiaire Collective, the price prediction tool ensures the volume and speed of transactions. The more transactions, the more commissions the platform earns. It also enhances user satisfaction: buyers find items that are priced to generate a surplus and sellers save time selling their items. 
 
-<br/>
 
-### Méthode 
+
+### Method 
 
 1. Data collection from Vestiaire Collective [website](https://fr.vestiairecollective.com/)
 
@@ -36,27 +30,19 @@ For Vestiaire Collective, the price prediction tool ensures the volume and speed
 
 4. Model selection and decision-making
 
-<br/>
+## Data collection 
 
-## Collecte des données
+### Web scraping
 
-<br/>
+Selection of the **35 first brands** from the [Notre Sélection](https://fr.vestiairecollective.com/marques/) section on the website
 
-### Méthode
-
-Selection of the **35 first brands** from the (https://fr.vestiairecollective.com/marques/) section
-
-Implementation of a python library `vc_scraping` to collect data and create the data set:
+Implementation of a python library `vc_scraping` to collect and parse web data from [Vestiaire Collective](https://fr.vestiairecollective.com/):
 - Saving the **10 first pages** of articles for each brand and the web pages of each article in serializable dataclasses
 - Identification and storage of each item's characteristics (price, brand, number of *likes*, etc.) in serializable dataclasses
 
 Example with `python -m vc_scraping`
 
-<br/>
-
 ![width:1150px height:640px](imgs/vc_scraping.gif)
-
-<br/>
 
 ### Data description
 
@@ -80,110 +66,91 @@ Data set obtained after the scraping and parsing stages via the `make_dataset` f
 | `size` | category | Taille (M, L, 40, etc.) | 
 | `location` | category | Localisation du vendeur | 
 
-<br/>
+
 
 ## Data analysis and cleaning
 
-<br/>
-
-### Visualisation de la variable cible `price`
-
-<br/>
+### Target variable visualization
 
 ![center](imgs/price_distribution.png)
 
-<br/>
+One can note a right skewed density curve related to the `price` target variable. The average price ($\approx$ 421€) is indeed higher than the median price (250€).
 
-### Nettoyage des données
+### Data preprocessing
 
-- Suppression des catégories peu représentées dans chaque variable
-- Traitement de la variable `size` : 
+- Removal of less represented categories in each categorical variable
+- Treatment of the `size` variable: 
 
-  - Echelle "S, M, L" pour les vêtements
-  - Echelle "36, 40, 44" pour les chaussures
+  - Sizes are encoded as "S, M, L" for clothing
+  - Sizes are encoded from 35 to 45 for shoes
 
-- Transformation des variables catégorielles en variables binaires avec la fonction `pd.get_dummies`
-
-<br/>
-
-## Implémentation des modèles de régression via `sklearn`
+- Encoding of categorical variables into dummies with `pd.get_dummies`
 
 
+## Regression models with `sklearn`
 
-<br/>
+### General information
 
-### Objectif & Méthode
+**Purpose** : identify a model that best explains the relationship between the price of an item and its characteristics
 
-**Objectif** : identifier un modèle expliquant au mieux la relation entre le prix d'un article et ses caractéristiques
+**Methode** : implementation of a machine learning library `vc_ml` to almost automate models' training and select the best performing model
 
-**Méthode** : création d'une librairie `vc_ml` pour entrainer des modèles de *machine learning* de manière automatique et choisir l'estimateur le plus adapté aux données
+### `vc_ml`
 
-<br/>
+It is a library which consists in the following scripts: 
 
-### Présentation de la librairie `vc_ml`
-
-- `data.py` : créer les échantillons d'apprentissage et test
-- `estimators.py` : définir les estimateurs sous forme de dataclasses
-- `config.py` : configuration des modèles à entrainer avec pour chaque modèle la grille de paramètres à tester
+- `data.py` : create training and testing sets
+- `estimators.py` : define estimators as serializable dataclasses
+- `config.py` : configuration of the models and parameter grids to train
 - `training.py` 
-  - Classe d'entrainement d'un modèle et de ses paramètres
-  - Fonction pour entrainer plusieurs modèles
-- `selection.py` : fonctions pour la sélection du meilleur modèle
+  - Model training for a given combination of parameters and cross-validation
+  - Function to train multiple models
+- `selection.py` : functions to select the best performing estimator and its parameters
 
-<br/>
+### Automated training
 
-### Apprentissage automatisé
+Each estimator is a serializable dataclass whose arguments are the parameters associated to the `sklearn` estimator.
 
-Chaque estimateur est une dataclass sérialisable dont les arguments sont les paramètres associés à l'estimateur
+The estimators are stored in a configuration file in `yaml` format via the `Config` dataclass.
 
-Les estimateurs sont stockés dans un fichier de configuration au format `yaml` via la dataclass `Config`
-
-Exemple pour la configuration d'un modèle de type `GradientBoostingRegressor`
+Minimal example for the configuration of a `GradientBoostingRegressor` estimator:
 
 ```
 In [1]: from vc_ml import load_config
 In [2]: config = load_config(file_name="config_gb.yaml")
 In [3]: config
 Out[3]: Config(lr=None, ridge=None, tree=None, rf=None, gb=GBEstimator(n_estimators=[250, 500, 750, 1000], ...), mlp=None)
-
 ```
 
-Utilisation de la classe `ModelTraining` pour : 
+`ModelTraining` class's tools: 
 
-- Créer une *pipeline* avec possibilité d'effectuer une ACP sur la matrice des variables explicatives 
-- Entrainer un estimateur pour une combinaison de paramètres donnée via cross-validation
-- Sauvegarder le modèle entrainé en lui attribuant un nom unique et identifiable
+- Create a pipeline with possibility to reduce the feature vector's dimensionality with PCA before fitting the model
+- Train an estimator with given parameters using cross-validation
+- Save fitted model using a unique and identifiable name
 
-Utilisation de la fonction `train_models` pour entrainer plusieurs modèles avec pour chaque modèle, différentes combinaisons de paramètres à tester
+The `train_models` function: 
 
-La fonction permet aussi de spécifier une liste de valeurs à tester pour l'argument `n_components` de la classe `PCA`
+- Train multiple estimators with a parameter grid for each of them
+- Indicate a list of values for the `n_components` argument of `PCA`
 
-Exemple en ligne de commande via `python -m vc_ml` 
-
-<br/>
+Example in command line via `python -m vc_ml` 
 
 ![width:1150px height:640px](imgs/vc_ml.gif)
 
-<br/>
+## Model selection
 
-## Choix du meilleur modèle
+### Method
 
-<br/>
+- Retrieve models and cross-validation scores stored in a backup folder using the `get_cv_results`
+- Identify the best performing model with 3 possible criteria using `get_best_estimator`: 
 
-### Méthode
+  - Cross-validation average train score $\text{R}^2_{\text{tr}}$ 
+  - Cross-validation average test score $\text{R}^2_{\text{te}}$ 
+  - Cross-validation average score $\text{R}^2_{\text{avg}} = \frac{\text{R}^2_{\text{tr}}}{\text{R}^2_{\text{te}}}$
 
-- Récupération des modèles et des scores stockés dans un dossier backup à l'aide de la fonction `get_cv_results`
-- Identification du meilleur modèle par la fonction `get_best_estimator` avec 3 critères possibles : 
+$\rightarrow$ `GradientBoostingRegressor` without PCA
 
-  - Score d'entrainement
-  - Score de test
-  - Score moyen 
-
-$\rightarrow$ `GradientBoostingRegressor` sans ACP préalable
-
-<br/>
-
-### Paramètres du `GradientBoostingRegressor`
+### `GradientBoostingRegressor` parameters
 
 - `n_estimators` : 250
 - `max_depth` : 10
@@ -193,43 +160,32 @@ $\rightarrow$ `GradientBoostingRegressor` sans ACP préalable
 - `loss` : "huber"
 - `criterion` : "squared_error"
 
-<br/>
-
-### Visualisation des résultats du `GradientBoostingRegressor`
-
-<br/>
+### `GradientBoostingRegressor` visualization
 
 ![center](imgs/prediction_plot.png)
 
-<br/>
+Even though train and test scores are not that high, they are quite close which indicate that the selected model manages to scale on unseen data. However, it fails in predicting new prices accurately. 
 
-### Apport du *machine learning*
+### Is it worth the cost to use machine learning?
 
-- Augmentation significative du score en test entre `GradientBoostingRegressor` et modèle de base tel que le `DummyRegressor` (prédiction par la moyenne) : **on passe de 0 à 0.43** 
-- Cependant, **seulement 43% de la variabilité des prix est expliquée par les variables explicatives utilisées dans le modèle**
+- Significant increase in score between the `GradientBoostingRegressor` (43%) estimator and a baseline model such as the `DummyRegressor` estimator (0%) (prédiction by the mean) 
+- However, **only 43% of the price variability is explained by the explanatory variables used in the model**
+- The model has difficulty in predicting expensive items
 
-- Difficulté à prédire les articles à prix élevé 
+## Concluding remarks
 
-<br/>
+### Coding 
 
-## Conclusion sur le projet
+- Semi automation data collection method to retrieve information on luxury fashion items from Vestiaire Collective
+- Methods to train regression models and model selection in an almost automated fashion
 
-<br/>
+### Business value
 
-### Apports techniques
+- Model selection that can help Vestiaire Collective users in pricing their items
+- However, the selected model is limited in terms of predictive power and its results need to be qualified
 
-- Collecter des informations de manière quasiment automatique sur Vestiaire Collective
-- Automatiser l'entrainement de modèles de régression, leur sauvegarde et le choix du meilleur estimateur
+### Limits & further improvements
 
-<br/>
-
-### Apport business
-
-Identification d'un modèle pouvant être utilisé en **aide à la décision** pour la fixation du prix mais restreint dans sa capacité à déterminer le "bon" prix
-
-<br/>
-
-### Axes d'amélioration
-
-- Collecter plus d'articles pour améliorer la force de prédiction des modèles entrainés
-- Entrainer des modèles plus avancés tels que des algorithmes de *deep learning*
+Through this project, it can be concluded that predicting the price of second-hand luxury fashion items is a complicated task. The data can be subject to both bias and noise as this kind of products have a psychological value which varies accross individuals. To adress this issue, several strategies could be adopted such as:
+- Collecting much more data to train models on a greater number of samples
+- Implementing more advanced deep learning models to deal with noise and bias in the data
