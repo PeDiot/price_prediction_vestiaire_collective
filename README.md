@@ -1,8 +1,8 @@
-# Decision Support for Pricing of Second-Hand Luxury Fashion Items
+<h1>Decision Support for Pricing of Second-Hand Luxury Fashion Items <img src="./imgs/vestiaire_logo.jpg" width=40 height=30> </h1>
 
 ## Introduction
 
-### Vestiaire Collective
+### Vestiaire Collective 
 
 Vestiaire Collective is a platform on which second-hand fashion items are traded. Its objective is to connect sellers and buyers while certifying the authenticity of the products offered by the sellers. This platform allows to remove the problem of asymetric information related to the sale of luxury products. 
 
