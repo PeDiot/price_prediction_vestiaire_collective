@@ -50,12 +50,15 @@ from typing import Dict, List
 
 import numpy as np 
 import pandas as pd 
-from os import listdir, pipe
+from os import listdir
 from pickle import load, dump
+
+from joblib import Parallel, delayed
 
 from sklearn.pipeline import Pipeline
 
 from .data import BACKUP
+from .training import CPU_COUNT
 
 class ModelDir(Enum): 
     DUM = "DummyRegressor/"
@@ -90,7 +93,8 @@ def get_cv_results(files_path: List[str]) -> pd.DataFrame:
         "avg_test_score": [], 
         "avg_score": [] 
     }
-    for path in files_path:
+
+    def _process(path: str): 
         cv_data = _read_file(path)
         est = cv_data["estimator"][0]
         train_score = np.mean(cv_data["train_score"])
@@ -100,7 +104,19 @@ def get_cv_results(files_path: List[str]) -> pd.DataFrame:
         d["avg_train_score"].append(train_score)
         d["avg_test_score"].append(test_score)
         d["avg_score"].append(score)
-    return pd.DataFrame.from_dict(d) 
+        return pd.DataFrame.from_dict(d)
+    
+    cv_res_list = Parallel(
+            n_jobs=CPU_COUNT-1
+        )(
+            delayed(_process)(path)
+            for path in files_path
+        ) 
+    
+    return pd.concat(
+        objs=cv_res_list, 
+        axis=0
+    ) 
 
 def get_best_estimator(
     cv_results: pd.DataFrame, 
