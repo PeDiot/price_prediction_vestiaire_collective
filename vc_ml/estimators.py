@@ -226,12 +226,12 @@ class MLPEstimator:
 
     def __post_init__(self): 
         "Check parameters."
-        for hidden_layer_sizes in self.hidden_layer_sizes:
-            if type(hidden_layer_sizes) != list:
-                raise ValueError("'hidden_layer_sizes' must be a list.")
-            for layer in hidden_layer_sizes:
-                if type(layer) != int or layer <= 0:
-                    raise ValueError("The number of neurons in each layer must be a strictly positive intergers.")
+        for layers in self.hidden_layer_sizes:
+            if type(layers) != list:
+                raise ValueError("'The neural network architecture must be a list.")
+            for size in layers:
+                if type(size) != int or size <= 0:
+                    raise ValueError("The number of neurons in each layer must be a strictly positive integer.")
         for max_iter in self.max_iter:
             if type(max_iter) != int or max_iter <= 0:
                 raise ValueError("'max_iter' must be a list of strictly positive intergers.")
