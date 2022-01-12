@@ -19,6 +19,8 @@ from typing import (
     Tuple, 
 )
 
+from joblib import Parallel, delayed
+
 from sklearn.decomposition import PCA
 
 from sklearn.preprocessing import OneHotEncoder
@@ -36,8 +38,6 @@ from .data import (
 )
 
 from .config import Config
-
-from joblib import Parallel, delayed
 
 CPU_COUNT = os.cpu_count()
          
