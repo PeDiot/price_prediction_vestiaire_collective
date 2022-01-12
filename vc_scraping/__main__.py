@@ -55,17 +55,18 @@ from typing import List
 from rich import print
 
 print(" "*100)
-print("Usage example of the 'vs_scraping' library which aims to collect data from the Vestiaire Collective website.")
+print("Usage example of the 'vc_scraping' library which aims to collect data from the Vestiaire Collective website.")
 print(" "*100)
 print("-"*100)
 
+print(" "*100)
 print("Collecting brands from Vestiaire Collective website...")
 scraper = HomePageScraper()
 brands_links = scraper.get_brands()
 print(brands_links)
 scraper.driver.quit()
 print(f"{len(brands_links)} brands collected.")
-
+print(" "*100)
 print("-"*100)
 
 brand = "gucci"
@@ -86,7 +87,9 @@ basic_items = parser.to_basic_items()
 print(f"{len(basic_items)} items have been parsed.")
 print(f"First item's basic features : {basic_items[0]}")
 
+print(" "*100)
 print("-"*100)
+print(" "*100)
 
 print("Parsing items' specific features...")
 print(" "*100)
