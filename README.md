@@ -50,21 +50,21 @@ Data set obtained after the scraping and parsing stages via the `make_dataset` f
 
 | Variable   |      Type      | Description    |
 |:-|:-|:-|
-| `id`         |  int        | Numéro d'identification de l'article              | 
-| `url`        |   string    | Lien de la page web de l'article          | 
-| `num_likes`   | int  | Nombre de *likes* reçu par l'article
-| `price` | float | Prix |
-| `we_love_tag` | bool | Indique si l'article est un coup de coeur de Vestiaire Collective |
-| `online_date` | datetime | Date de mise en ligne |
-| `gender` | bool | Genre (homme, femme, enfant) | 
-| `category` | category | Catégorie (chaussures, vêtement, accessoires, etc.) | 
-|  `sub_category` | category | Sous-catégorie (baskets, chemises, jeans, etc.) | 
-| `designer` | category | Marque de l'article | 
-| `condition` | category | Etat de l'article |
-| `material` | category | Matériaux composant l'article | 
-| `color` | category | Couleur | 
-| `size` | category | Taille (M, L, 40, etc.) | 
-| `location` | category | Localisation du vendeur | 
+| `id`         |  int        | Item's ID number               | 
+| `url`        |   string    | Item web page link        | 
+| `num_likes`   | int  | Number of likes received
+| `price` | float | Price |
+| `we_love_tag` | bool | Indicate whether the item is a favorite of Vestiaire Collective |
+| `online_date` | datetime | Date of online publication|
+| `gender` | bool | Men, Women, Kids | 
+| `category` | category | Shoes, Clothing, Bags, etc. | 
+|  `sub_category` | category | Jeans, Trainers, Coats, etc. | 
+| `designer` | category | Item's brand | 
+| `condition` | category | Item's condition (fair, good, nerver worn, etc.) |
+| `material` | category | Materials  | 
+| `color` | category | Color | 
+| `size` | category | Size (M, L, 40, etc.) | 
+| `location` | category | Seller's location | 
 
 
 
