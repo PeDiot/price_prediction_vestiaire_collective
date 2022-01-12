@@ -1,6 +1,6 @@
 """Description.
 
-Test the estimators from the "vc_ml" library.
+Test the estimators from the vc_ml library.
 """
 
 import pytest

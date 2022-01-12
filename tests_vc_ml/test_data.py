@@ -1,10 +1,9 @@
 """Description.
 
-Test the "data" script from the "vc_ml" library.
+Test the data script from the "vc_ml" library.
 """
 
 import pytest 
-import coverage
 
 import numpy as np
 import pandas as pd 
@@ -77,7 +76,7 @@ def test_to_dummies(simulated_data):
     assert data_enc.columns.tolist() == columns
     assert data_enc.shape == shape 
 
-def test_instanciation_split_data(simulated_data):
+def test_split_data_instanciation(simulated_data):
     """Instanciation testing for SplitData."""
     s = SplitData(data=simulated_data)
     assert isinstance(s, SplitData)
