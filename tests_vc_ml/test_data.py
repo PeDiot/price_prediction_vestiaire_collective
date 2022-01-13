@@ -3,15 +3,19 @@
 Test the data script from the "vc_ml" library.
 """
 
+from _pytest.config import filename_arg
 import pytest 
 
 import numpy as np
 import pandas as pd 
 
 from vc_ml import (
+    read_data,
     to_dummies, 
     Target, 
     SplitData, 
+    load_feature_vector, 
+    load_target
 )
 
 @pytest.fixture
@@ -37,6 +41,11 @@ def simulated_data():
         if data[col].dtype == "object":
             data[col] = pd.Categorical(data[col])
     return data
+
+def test_error_read_data(): 
+    with pytest.raises(ValueError):
+        file_name = "train.json"
+        read_data(file_name)
 
 def test_to_dummies(simulated_data): 
     """Test the categorical variables encoding."""
@@ -118,5 +127,28 @@ def test_make_dict_of_targets(simulated_data):
     s = SplitData(data=simulated_data)
     targets_dict = s._make_dict_of_targets(y)
     assert list(targets_dict.keys()) == [target.value for target in Target] 
+
+def test_error_save(simulated_data): 
+    """Test whether save function from SplitData raises error."""
+    s = SplitData(data=simulated_data)
+    X, y = s.get_feature_vector(), s.get_targets()
+    file_name = "saved_data.yaml"
+    with pytest.raises(ValueError):
+        s.save(X, y, file_name)
+
+def test_error_load_feature_vector():
+    """Test whether load_feature_vector raises error."""
+    file_name = "X_tr.xlsx"
+    with pytest.raises(ValueError): 
+        load_feature_vector(file_name)
+    
+def test_errors_load_target():
+    """Test whether load_target raises errors."""
+    with pytest.raises(ValueError): 
+        file_name = "y_tr.csv"
+        load_target(file_name)
+    with pytest.raises(ValueError):
+        file_name = "y_te.pkl"
+        load_target(file_name=file_name, target="PRICE")
 
 
