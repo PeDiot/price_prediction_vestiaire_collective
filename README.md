@@ -210,3 +210,5 @@ Even though train and test scores are not that high, they are quite close which 
 Through this project, it can be concluded that predicting the price of second-hand luxury fashion items is a complicated task. The data can be subject to both bias and noise as this kind of products have a psychological value which varies accross individuals. To adress this issue, several strategies could be adopted such as:
 - Collecting much more data to train models on a greater number of samples
 - Implementing more advanced deep learning models to deal with noise and bias in the data
+
+Furthermore, if a better perfoming predictor can be identified it could be a good idea to build a dashboard which would take the item's features as inputs and render the predicted price. It could be a useful tool for Vestiaire Collective users.
