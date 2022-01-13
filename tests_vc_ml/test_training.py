@@ -6,6 +6,8 @@ Test ModelTraining and train_models from the vc_ml library.
 from multiprocessing import Value
 import pytest
 
+from vc_ml.data import to_dummies
+
 from .test_data import simulated_data
 
 from vc_ml import (
@@ -24,8 +26,12 @@ from sklearn.model_selection import cross_validate
 from sklearn.linear_model import Ridge
 
 @pytest.fixture
-def simulated_train_data(simulated_data): 
-    s = SplitData(data=simulated_data)
+def dummy_data(simulated_data):
+    return to_dummies(simulated_data)
+
+@pytest.fixture
+def simulated_train_data(dummy_data): 
+    s = SplitData(data=dummy_data)
     X, y = s.get_feature_vector(), s.get_targets()
     y = s._make_dict_of_targets(y)
     return X, y["price"]
@@ -57,15 +63,15 @@ def test_training_instanciation(training):
     assert isinstance(training, ModelTraining)
 
 def test_errors_training(
-    simulated_data, 
+    dummy_data, 
     ridge_estimator, 
     ridge_params
 ):
-    X = simulated_data.drop(
+    X = dummy_data.drop(
         labels=["num_likes", "price", "we_love_tag", "lprice"], 
         axis=1
     )
-    y = simulated_data["price"]
+    y = dummy_data["price"]
     with pytest.raises(ValueError):
         ModelTraining(
             X=X, y=y, 

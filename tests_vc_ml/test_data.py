@@ -1,6 +1,6 @@
 """Description.
 
-Test the data script from the "vc_ml" library.
+Test the data script from the vc_ml library.
 """
 
 from _pytest.config import filename_arg
