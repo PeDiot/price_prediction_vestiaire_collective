@@ -18,8 +18,6 @@ Besides, the algorithm allows buyers to find items sold at a price close to thei
 
 For Vestiaire Collective, the price prediction tool ensures the volume and speed of transactions. The more transactions, the more commissions the platform earns. It also enhances user satisfaction: buyers find items that are priced to generate a surplus and sellers save time selling their items. 
 
-
-
 ### Method 
 
 1. Data collection from Vestiaire Collective [website](https://fr.vestiairecollective.com/)
@@ -43,6 +41,17 @@ Implementation of a python library `vc_scraping` to collect and parse web data f
 Example with `python -m vc_scraping`
 
 ![width:1150px height:640px](imgs/vc_scraping.gif)
+
+**Code summary**
+
+```
+C:\Users\pemma\OneDrive - Université de Tours\Mécen\M2\S1\02 - Machine Learning\05 - Projet\price_prediction_vestiaire_collective>pygount --format=summary ./vc_scraping
+Language   Files    %     Code    %     Comment    %   
+---------  -----  ------  ----  ------  -------  ------
+Python         9  100.00   557  100.00      211  100.00
+---------  -----  ------  ----  ------  -------  ------
+Sum total      9           557              211
+```
 
 ### Data description
 
@@ -105,6 +114,17 @@ It is a library which consists in the following scripts:
   - Model training for a given combination of parameters and cross-validation
   - Function to train multiple models
 - `selection.py` : functions to select the best performing estimator and its parameters
+
+**Code summary**
+
+```
+C:\Users\pemma\OneDrive - Université de Tours\Mécen\M2\S1\02 - Machine Learning\05 - Projet\price_prediction_vestiaire_collective>pygount --format=summary ./vc_ml
+Language   Files    %     Code    %     Comment    %   
+---------  -----  ------  ----  ------  -------  ------
+Python         7  100.00   708  100.00      398  100.00
+---------  -----  ------  ----  ------  -------  ------
+Sum total      7           708              398
+```
 
 ### Automated training
 
