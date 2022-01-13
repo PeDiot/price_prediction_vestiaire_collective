@@ -40,7 +40,7 @@ def simulated_data():
     for col in data.columns:
         if data[col].dtype == "object":
             data[col] = pd.Categorical(data[col])
-    return data
+    return data.drop(labels=["category"], axis=1)
 
 def test_error_read_data(): 
     with pytest.raises(ValueError):
@@ -54,7 +54,6 @@ def test_to_dummies(simulated_data):
         "num_likes",
         "price",
         "we_love_tag",
-        "category",
         "lprice",
         "Women",
         "coats",
@@ -81,7 +80,7 @@ def test_to_dummies(simulated_data):
         "other_country",
         "uk"
     ]
-    shape = (simulated_data.shape[0], 29)
+    shape = (simulated_data.shape[0], 28)
     assert data_enc.columns.tolist() == columns
     assert data_enc.shape == shape 
 
@@ -102,7 +101,7 @@ def test_get_feature_vector(simulated_data):
     s = SplitData(data=simulated_data)
     X = s.get_feature_vector()
     assert type(X) == np.ndarray
-    assert X.shape == (5, 9)
+    assert X.shape == (5, 8)
 
 def test_get_targets(simulated_data):
     """Test the function which outputs the targets vector."""
