@@ -175,17 +175,21 @@ class SplitData:
 
     def get_feature_vector(self) -> np.ndarray: 
         """Return an array of features."""
-        return self.data.drop(
-            labels=self._targets, 
-            axis=1
-        ).values
+        return np.array(
+            self.data.drop(
+                labels=self._targets, 
+                axis=1
+            ).values
+        )
 
     def get_targets(self) -> np.ndarray: 
         """Return an array of target variables."""
-        return self.data.loc[
-            :, 
-            self._targets
-        ].values
+        return np.array(
+            self.data.loc[
+                :, 
+                self._targets
+            ].values
+        ) 
 
     def split(
         self, 
@@ -227,12 +231,12 @@ class SplitData:
 def load_feature_vector(file_name: str) -> np.ndarray: 
     """Return X array."""
     data = read_data(file_name=file_name)
-    return data["X"] 
+    return data["X"]
 
 def load_target(file_name: str, target: Target = Target.PRICE) -> np.ndarray: 
     """Return y array."""
     if not isinstance(target, Target):
         raise ValueError("'target' must be of class 'Target'.")
     data = read_data(file_name=file_name)
-    return data["y"][target.value] 
+    return data["y"][target.value]
 

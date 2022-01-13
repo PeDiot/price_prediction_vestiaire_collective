@@ -3,6 +3,7 @@
 Automate training process using pipelines, grid search and cross-validation.
 """
 
+from multiprocessing import Value
 import numpy as np 
 import pandas as pd
 from pickle import dump 
@@ -131,7 +132,17 @@ class ModelTraining:
         self.estimator = estimator
         self.params = params 
         self.n_comp = n_comp
+
+        if type(self.X) != np.ndarray or type(self.y) != np.ndarray:
+            raise ValueError("X and y must be numpy arrays.")
         
+        if type(self.params) != dict:
+            raise ValueError("'params' must be a dictionnary.")
+
+        if self.n_comp is not None: 
+            if self.n_comp <= 0 or type(self.n_comp) != int:
+                raise ValueError("The number of principal components must be a striclty positive integer.")
+
         self._estimator_name = self.estimator.__class__.__name__
         self._backup_dir = BACKUP + "models/" + str(self._estimator_name) + "/"
         self._key = self._get_hash_key() 
@@ -178,6 +189,8 @@ class ModelTraining:
         cv: int
     ) -> Dict: 
         """Fit cross-validation with pipeline as estimator."""
+        if cv <= 0 or type(cv) != int:
+            raise ValueError("The number of folds must be a strictly positive integer.")
         return cross_validate(
             estimator=p, 
             X=self.X, 
