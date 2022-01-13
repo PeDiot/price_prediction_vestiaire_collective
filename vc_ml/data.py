@@ -99,6 +99,7 @@ In [15]: s.save(
     ...: )
 """
 
+from _pytest.python_api import raises
 import pandas as pd
 import numpy as np
 from pickle import load, dump 
@@ -122,6 +123,8 @@ class Target(Enum):
 
 def read_data(file_name) -> pd.DataFrame: 
     """Read the data file."""
+    if file_name[-3:] != "pkl": 
+        raise ValueError("Only .pkl files can be read.")
     file_path = BACKUP + "data/" + file_name
     with open(file_path, "rb") as file: 
         data = load(file)
@@ -211,6 +214,8 @@ class SplitData:
         file_name: str
     ):
         """Save split dataset.""" 
+        if file_name[-3:] != "pkl": 
+            raise ValueError("Only .pkl files can be saved.")
         data =  {
             "X": X, 
             "y": self._make_dict_of_targets(y)
@@ -226,5 +231,8 @@ def load_feature_vector(file_name: str) -> np.ndarray:
 
 def load_target(file_name: str, target: Target = Target.PRICE) -> np.ndarray: 
     """Return y array."""
+    if not isinstance(target, Target):
+        raise ValueError("'target' must be of class 'Target'.")
     data = read_data(file_name=file_name)
     return data["y"][target.value] 
+
