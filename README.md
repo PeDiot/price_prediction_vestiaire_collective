@@ -67,7 +67,6 @@ Data set obtained after the scraping and parsing stages via the `make_dataset` f
 | `location` | category | Seller's location | 
 
 
-
 ## Data analysis and cleaning
 
 ### Target variable visualization
@@ -152,6 +151,8 @@ $\rightarrow$ `GradientBoostingRegressor` without PCA
 
 ### `GradientBoostingRegressor` parameters
 
+Gradient Boosting is an ensemble method which combines several weak predictors like regression trees into a strong predictor.The idea of most boosting methods is to train predictors sequentially, each trying to correct its predecessor.
+
 - `n_estimators` : 250
 - `max_depth` : 10
 - `min_samples_split` : 20
@@ -168,7 +169,7 @@ Even though train and test scores are not that high, they are quite close which 
 
 ### Is it worth the cost to use machine learning?
 
-- Significant increase in score between the `GradientBoostingRegressor` (43%) estimator and a baseline model such as the `DummyRegressor` estimator (0%) (prédiction by the mean) 
+- Significant increase in score between the `GradientBoostingRegressor` (43%) estimator and a baseline model such as the `DummyRegressor` estimator (0%) (prediction by the mean) 
 - However, **only 43% of the price variability is explained by the explanatory variables used in the model**
 - The model has difficulty in predicting expensive items
 
