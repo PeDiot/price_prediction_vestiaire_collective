@@ -8,15 +8,15 @@ Vestiaire Collective is a platform on which second-hand fashion items are traded
 
 ### Purpose
 
-Implement a machine learning algorithm to **estimate the price of a second-hand luxury item** in order to help users set the "right" price when they put an item on sale on the Vestiaire Collective platform.
+Implementing a machine learning algorithm to **estimate the price of a second-hand luxury item** in order to help users set the "right" price when they put an item on sale on the platform.
 
 ### Motivations
 
-The algorithm's prediction allows sellers to avoid wasting time in setting the price. This decision support helps him to maximize his profits by preventing him from selling at too low a price or not finding buyers because his price is too high.
+The algorithm's prediction could minimize the time spent by sellers to set prices. Besides, the decision-support tool could help sellers maximize their profits by preventing them from selling at too low a price or not finding buyers because their price would be too high.
 
-Besides, the algorithm allows buyers to find items sold at a price close to their willingness to pay by encouraging sellers to set the "right" price.
+The tool we want to build could help buyers to find items sold at a price close to their willingness to pay by encouraging sellers to set the "right" price.
 
-For Vestiaire Collective, the price prediction tool ensures the volume and speed of transactions. The more transactions, the more commissions the platform earns. It also enhances user satisfaction: buyers find items that are priced to generate a surplus and sellers save time selling their items. 
+For Vestiaire Collective, the price prediction tool could ensure the volume and speed of transactions. The more transactions, the more commissions the platform earns. It could also enhance user satisfaction: buyers would find items that are priced to generate a surplus and sellers would save time selling their items. 
 
 ### Method 
 
