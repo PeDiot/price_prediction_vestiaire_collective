@@ -12,7 +12,7 @@ Implementing a machine learning algorithm to **estimate the price of a second-ha
 
 ### Motivations
 
-The algorithm's prediction could minimize the time spent by sellers to set prices. Besides, the decision-support tool could help sellers maximize their profits by preventing them from selling at too low a price or not finding buyers because their price would be too high.
+The decision-support tool could minimize the time spent by sellers to set prices by providing them with an estimated price for their item. Besides, it could help sellers maximize their profits by minimizing the risks of selling at too low a price or not finding buyers because their a too high price.
 
 The tool we want to build could help buyers to find items sold at a price close to their willingness to pay by encouraging sellers to set the "right" price.
 
