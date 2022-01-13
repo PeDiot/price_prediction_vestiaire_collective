@@ -53,6 +53,7 @@ Out[5]:
 """
 
 from dataclasses import dataclass
+from multiprocessing import Value
 
 from serde import serialize, deserialize
 from serde.yaml import to_yaml, from_yaml
@@ -113,6 +114,8 @@ class Config:
 
 def create_config(file_name: str = "config_init.yaml"): 
     """Initialize a configuration file."""
+    if file_name[-4:] not in ("yaml", "json"):
+        raise ValueError("Configuration files must be .yaml or .json files.")
     config = Config(
         dum=DummyEstimator(), 
         lr=LREstimator(), 
@@ -128,6 +131,8 @@ def create_config(file_name: str = "config_init.yaml"):
 
 def load_config(file_name: str= "config.yaml"): 
     """Load models configuration file."""
+    if file_name[-4:] not in ("yaml", "json"):
+        raise ValueError("Configuration files must be .yaml or .json files.")
     path = BACKUP + "config/" + file_name
     with open(path, "r") as file:
         config = file.read()
