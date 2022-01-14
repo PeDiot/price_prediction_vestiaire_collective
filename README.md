@@ -101,7 +101,7 @@ One can note a right skewed density curve related to the `price` target variable
 
 **Purpose** : identify a model that best explains the relationship between the price of an item and its characteristics
 
-**Methode** : implementation of a machine learning library `vc_ml` to almost automate models' training and select the best performing model
+**Method** : implementation of a machine learning library `vc_ml` to almost automate models' training and select the best performing model
 
 ### `vc_ml`
 
@@ -125,6 +125,8 @@ Python         7  100.00   708  100.00      398  100.00
 ---------  -----  ------  ----  ------  -------  ------
 Sum total      7           708              398
 ```
+
+**Tests**: the library is partly tested, see `tests_vc_ml`.
 
 ### Automated training
 
@@ -212,3 +214,5 @@ Through this project, it can be concluded that predicting the price of second-ha
 - Implementing more advanced deep learning models to deal with noise and bias in the data
 
 Furthermore, if a better perfoming predictor can be identified it could be a good idea to build a dashboard which would take the item's features as inputs and render the predicted price. It could be a useful tool for Vestiaire Collective users.
+
+Finally, the tests related to the `vc_ml` and `vc_scraping` library could be enriched. 
