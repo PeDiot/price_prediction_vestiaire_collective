@@ -44,8 +44,8 @@ def simulated_data():
 
 def test_error_read_data(): 
     with pytest.raises(ValueError):
-        file_name = "train.json"
-        read_data(file_name)
+        file_path = "./data/train.json"
+        read_data(file_path)
 
 def test_to_dummies(simulated_data): 
     """Test the categorical variables encoding."""
@@ -137,17 +137,17 @@ def test_error_save(simulated_data):
 
 def test_error_load_feature_vector():
     """Test whether load_feature_vector raises error."""
-    file_name = "X_tr.xlsx"
+    file_path = "./data/X_tr.xlsx"
     with pytest.raises(ValueError): 
-        load_feature_vector(file_name)
+        load_feature_vector(file_path)
     
 def test_errors_load_target():
     """Test whether load_target raises errors."""
     with pytest.raises(ValueError): 
-        file_name = "y_tr.csv"
-        load_target(file_name)
+        file_path = "./data/y_tr.csv"
+        load_target(file_path)
     with pytest.raises(ValueError):
-        file_name = "y_te.pkl"
-        load_target(file_name=file_name, target="PRICE")
+        file_path = "./data/y_te.pkl"
+        load_target(file_path=file_path, target="PRICE")
 
 
