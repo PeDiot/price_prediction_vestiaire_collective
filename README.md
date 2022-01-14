@@ -94,6 +94,7 @@ One can note a right skewed density curve related to the `price` target variable
 
 - Encoding of categorical variables into dummies with `pd.get_dummies`
 
+Nb: the data cleaning process can be found in the `notebooks` folder, it has not been automated.
 
 ## Regression models with `sklearn`
 
