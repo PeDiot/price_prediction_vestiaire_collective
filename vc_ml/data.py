@@ -10,7 +10,7 @@ In [1]: from vc_ml import (
    ...: Target
    ...: )
 
-In [2]: data = read_data(file_name="vc_data_cleaned.pkl")
+In [2]: data = read_data(file_path="./data/vc_data_cleaned.pkl")
 
 In [3]: data.head()
 Out[3]: 
@@ -89,13 +89,13 @@ In [13]: X_train, X_test, y_train, y_test = s.split(X, y)
 In [14]: s.save(
     ...: X=X_train,
     ...: y=y_train,
-    ...: file_name="train.pkl"
+    ...: file_path="./data/train.pkl"
     ...: )
 
 In [15]: s.save(
     ...: X=X_test,
     ...: y=y_test,
-    ...: file_name="test.pkl"
+    ...: file_name="./data/test.pkl"
     ...: )
 """
 
@@ -228,15 +228,18 @@ class SplitData:
         with open(file_path , "wb") as file:
             dump(obj=data, file=file) 
 
-def load_feature_vector(file_name: str) -> np.ndarray: 
+def load_feature_vector(file_path: str) -> np.ndarray: 
     """Return X array."""
-    data = read_data(file_name=file_name)
+    data = read_data(file_path)
     return data["X"]
 
-def load_target(file_name: str, target: Target = Target.PRICE) -> np.ndarray: 
+def load_target(
+    file_path: str, 
+    target: Target = Target.PRICE
+) -> np.ndarray: 
     """Return y array."""
     if not isinstance(target, Target):
         raise ValueError("'target' must be of class 'Target'.")
-    data = read_data(file_name=file_name)
+    data = read_data(file_path)
     return data["y"][target.value]
 

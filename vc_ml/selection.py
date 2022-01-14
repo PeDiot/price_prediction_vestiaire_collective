@@ -76,7 +76,10 @@ def get_files_path() -> List:
         dir_path = BACKUP + "models/" + model_dir.value 
         model_results = list()
         for file_name in listdir(dir_path): 
-            files_path.append(dir_path + file_name) 
+            if file_name[-3:] != "pkl":
+                raise ValueError("Only pickle files are accepted.")
+            else:
+                files_path.append(dir_path + file_name) 
     return files_path
 
 def get_cv_results(files_path: List[str]) -> pd.DataFrame:
