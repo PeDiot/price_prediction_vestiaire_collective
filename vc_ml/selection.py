@@ -11,12 +11,30 @@ In [1]: from vc_ml import (
    ...: save_best_estimator
    ...: )
 
-In [2]: paths = get_files_path()
+In [2]: from random import shuffle
 
-In [3]: cv_results = get_cv_results(files_path=paths)
+In [3]: paths = get_files_paths()
 
-In [4]: get_best_estimator(cv_results=cv_results)
-Out[4]: 
+In [4] shuffle(paths)
+
+In [4]: cv_results = get_cv_results(files_paths=paths[:10])
+
+In [5]: cv_results
+Out[5]: 
+                                           estimator  avg_train_score  avg_test_score  avg_score
+0  (([DecisionTreeRegressor(criterion='mse', max_...         0.904547       -0.212792   0.345877
+1  (PCA(n_components=60), (DecisionTreeRegressor(...         0.243006        0.174527   0.208766
+2  (PCA(n_components=60), ([DecisionTreeRegressor...         0.863105        0.169511   0.516308
+3  (([DecisionTreeRegressor(criterion='friedman_m...         0.574464        0.251238   0.412851
+4       (DecisionTreeRegressor(max_features='auto'))         0.974460       -0.927888   0.023286
+5  (PCA(n_components=60), ([DecisionTreeRegressor...         0.385237        0.038034   0.211636
+6  (PCA(n_components=40), ([DecisionTreeRegressor...         0.324534        0.206097   0.265315
+7  (PCA(n_components=40), (DecisionTreeRegressor(...         0.681622        0.094684   0.388153
+8  (PCA(n_components=60), (DecisionTreeRegressor(...         0.234338        0.197392   0.215865
+9  (PCA(n_components=40), (DecisionTreeRegressor(...         0.271733        0.167686   0.219709
+
+In [6]: get_best_estimator(cv_results=cv_results)
+Out[6]: 
 {'best_estimator': Pipeline(steps=[('model',
                   GradientBoostingRegressor(criterion='mse',
                                             loss='absolute_error', max_depth=20,
@@ -27,15 +45,15 @@ Out[4]:
  'test_score': 0.3466649990038641,
  'avg_score': 0.3512416407665322}
 
-In [5]: get_best_estimator(cv_results=cv_results, criterion="train")
-Out[5]: 
+In [7]: get_best_estimator(cv_results=cv_results, criterion="train")
+Out[7]: 
 {'best_estimator': Pipeline(steps=[('model', DecisionTreeRegressor(max_features='auto'))]),
  'train_score': 0.9744604159492696,
  'test_score': -0.9278878299719601,
  'avg_score': 0.023286292988654755}
 
-In [6]: get_best_estimator(cv_results=cv_results, criterion="train_test")
-Out[6]: 
+In [8]: get_best_estimator(cv_results=cv_results, criterion="train_test")
+Out[8]: 
 {'best_estimator': Pipeline(steps=[('pca', PCA(n_components=80)),
                  ('model',
                   GradientBoostingRegressor(min_samples_split=5,
@@ -69,20 +87,20 @@ class ModelDir(Enum):
     GB = "GradientBoostingRegressor/"
     MLP = "MLPRegressor/"
 
-def get_files_path() -> List: 
+def get_files_paths() -> List: 
     """Retrieve cross-validation results for each fitted pipeline."""
-    files_path = list() 
+    files_paths = list() 
     for model_dir in ModelDir:
-        dir_path = BACKUP + "models/" + model_dir.value 
+        dir_path = "models/" + model_dir.value 
         model_results = list()
-        for file_name in listdir(dir_path): 
+        for file_name in listdir(BACKUP+dir_path): 
             if file_name[-3:] != "pkl":
                 raise ValueError("Only pickle files are accepted.")
             else:
-                files_path.append(dir_path + file_name) 
-    return files_path
+                files_paths.append(dir_path + file_name) 
+    return files_paths
 
-def get_cv_results(files_path: List[str]) -> pd.DataFrame:
+def get_cv_results(files_paths: List[str]) -> pd.DataFrame:
     """Return a data frame with all cross-validation results."""
     d = {
         "estimator": [], 
@@ -104,16 +122,16 @@ def get_cv_results(files_path: List[str]) -> pd.DataFrame:
         return pd.DataFrame.from_dict(d)
     
     cv_res_list = Parallel(
-            n_jobs=CPU_COUNT-1
+            n_jobs=CPU_COUNT-2
         )(
             delayed(_process)(path)
-            for path in files_path
+            for path in files_paths
         ) 
     
     return pd.concat(
         objs=cv_res_list, 
         axis=0
-    ).reset_index()
+    ).reset_index(drop=True)
 
 def get_best_estimator(
     cv_results: pd.DataFrame, 

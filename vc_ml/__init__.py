@@ -55,14 +55,14 @@ Training(estimator=GradientBoostingRegressor(), params={'criterion': 'friedman_m
 [Parallel(n_jobs=5)]: Using backend ThreadingBackend with 5 concurrent workers...
 
 In [1]: from vc_ml import (
-   ...: get_files_path,
+   ...: get_files_paths,
    ...: get_cv_results,
    ...: get_best_estimator
    ...: )
 
-In [2]: paths = get_files_path()
+In [2]: paths = get_files_paths()
 
-In [3]: cv_results = get_cv_results(files_path=paths)
+In [3]: cv_results = get_cv_results(files_paths=paths)
 
 In [4]: get_best_estimator(cv_results=cv_results)
 Out[4]: 
@@ -111,7 +111,7 @@ from .training import(
 
 from .selection import (
     ModelDir, 
-    get_files_path, 
+    get_files_paths, 
     get_cv_results,
     get_best_estimator, 
     save_best_estimator,
