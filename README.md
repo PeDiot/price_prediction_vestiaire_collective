@@ -127,7 +127,24 @@ Python         7  100.00   708  100.00      398  100.00
 Sum total      7           708              398
 ```
 
-**Tests**: the library is partly tested, see `tests_vc_ml`.
+**Tests**
+
+```
+C:\Users\pemma\OneDrive - Université de Tours\Mécen\M2\S1\02 - Machine Learning\05 - Projet\price_prediction_vestiaire_collective>coverage run -m pytest
+================================================================ test session starts ================================================================
+platform win32 -- Python 3.9.9, pytest-6.2.5, py-1.11.0, pluggy-1.0.0
+rootdir: C:\Users\pemma\OneDrive - Université de Tours\Mécen\M2\S1\02 - Machine Learning\05 - Projet\price_prediction_vestiaire_collective
+plugins: dash-2.0.0
+collected 37 items
+
+tests_vc_ml\test_config.py ....                     [ 13%]
+tests_vc_ml\test_data.py ..........                 [ 43%]
+tests_vc_ml\test_estimators.py ...........          [ 75%]
+tests_vc_ml\test_selection.py ..                    [ 83%]
+tests_vc_ml\test_training.py .....                  [100%]
+
+================================================================ 37 passed in 8.01s =================================================================
+```
 
 ### Automated training
 
