@@ -57,7 +57,7 @@ from joblib import Parallel, delayed
 
 from sklearn.pipeline import Pipeline
 
-from .data import BACKUP
+from .data import BACKUP, read_data
 from .training import CPU_COUNT
 
 class ModelDir(Enum): 
@@ -79,12 +79,6 @@ def get_files_path() -> List:
             files_path.append(dir_path + file_name) 
     return files_path
 
-def _read_file(path: str): 
-    """Read pickle file."""
-    with open(path, "rb") as file: 
-        data = load(file)
-    return data 
-
 def get_cv_results(files_path: List[str]) -> pd.DataFrame:
     """Return a data frame with all cross-validation results."""
     d = {
@@ -95,7 +89,7 @@ def get_cv_results(files_path: List[str]) -> pd.DataFrame:
     }
 
     def _process(path: str): 
-        cv_data = _read_file(path)
+        cv_data = read_data(file_path=path)
         est = cv_data["estimator"][0]
         train_score = np.mean(cv_data["train_score"])
         test_score = np.mean(cv_data["test_score"]) 

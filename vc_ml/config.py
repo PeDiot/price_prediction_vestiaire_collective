@@ -65,6 +65,8 @@ from typing import (
     Tuple
 )
 
+from os.path import isfile
+
 from .data import BACKUP 
 
 from .estimators import ( 
@@ -134,6 +136,8 @@ def load_config(file_name: str= "config.yaml"):
     if file_name[-4:] not in ("yaml", "json"):
         raise ValueError("Configuration files must be .yaml or .json files.")
     path = BACKUP + "config/" + file_name
+    if not isfile(path):
+        raise ValueError(f"{file_name} does not exist.") 
     with open(path, "r") as file:
         config = file.read()
     return from_yaml(c=Config, s=config)

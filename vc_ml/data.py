@@ -121,11 +121,11 @@ class Target(Enum):
     WE_LOVE_TAG = "we_love_tag"
     NUM_LIKES = "num_likes"
 
-def read_data(file_name) -> pd.DataFrame: 
+def read_data(file_path: str) -> pd.DataFrame: 
     """Read the data file."""
-    if file_name[-3:] != "pkl": 
+    if file_path[-3:] != "pkl": 
         raise ValueError("Only .pkl files can be read.")
-    file_path = BACKUP + "data/" + file_name
+    file_path = BACKUP + file_path
     with open(file_path, "rb") as file: 
         data = load(file)
     return data 
