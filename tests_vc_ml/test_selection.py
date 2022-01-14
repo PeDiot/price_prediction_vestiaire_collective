@@ -142,6 +142,32 @@ def test_get_cv_results(save_cv_results):
     assert cv_results.shape == (3, 4)
     assert type(cv_results) == DataFrame
 
+@pytest.fixture
+def simulated_cv_results():
+    files_paths = [ 
+        "tests/tree_cv_results.pkl", 
+        "tests/lr_cv_results.pkl", 
+        "tests/ridge_cv_results.pkl"
+    ]
+    return get_cv_results(files_paths)
+
+def test_error_get_best_estimator(simulated_cv_results):
+    with pytest.raises(ValueError):
+        best_estimator = get_best_estimator(
+            cv_results=simulated_cv_results, 
+            criterion="r2"
+        )
+
+def test_get_best_estimator(simulated_cv_results):
+    best_est_results = get_best_estimator(cv_results=simulated_cv_results) 
+    assert list(best_est_results.keys()) == [ 
+        "best_estimator", 
+        "train_score", 
+        "test_score", 
+        "avg_score"
+    ]
+    assert type(best_est_results) == dict 
+
 
 
 
